@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies & Build Output
+node_modules
+dist
+dist-ssr
+
+# Environment Variables & Secrets (MANDATORY NEVER PUSH)
+.env
+.env.*
+!.env.example
+*.env
+*.local
+
+# Database dumps & SQL files (MANDATORY NEVER PUSH)
+*.sql
+*.sql.bak
+*.bak
+*.dump
+
+# Temporary & Archive files
+*.zip
+*.tar.gz
+*.csv
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

@@ -1,0 +1,118 @@
+import React from 'react';
+import { Calendar, ChevronDown, Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
+
+interface HeroSectionProps {
+  onBookClick: () => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ onBookClick }) => {
+  return (
+    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#25251F]">
+      {/* Background Image with Slow Subtle Ambient Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="./assets/gallery/carousel(1).jpg"
+          alt="Suasana Tenang Zen Family Spa"
+          className="w-full h-full object-cover object-center scale-105 transition-transform duration-10000 ease-out"
+        />
+        {/* Multilayer Soft Gradient Overlay to ensure text readability while maintaining warm photo tone */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#25251F]/85 via-[#25251F]/70 to-[#25251F]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#25251F] via-transparent to-[#25251F]/40" />
+      </div>
+
+      {/* Hero Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center text-[#F8F5F1]">
+        {/* Subtle Top Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#889D35]/25 border border-[#889D35]/40 text-[#D2C0A7] text-xs uppercase tracking-widest font-semibold mb-6 animate-fadeIn">
+          <Sparkles className="w-3.5 h-3.5 text-[#889D35]" />
+          <span>The Sanctuary of Mindful Rejuvenation</span>
+        </div>
+
+        {/* Main Headline */}
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.15] text-[#F8F5F1] mb-6 tracking-tight">
+          Kembali ke Titik Nol, <br />
+          <span className="italic font-light text-[#D2C0A7]">
+            Rasakan Kedamaian Hakiki
+          </span>
+        </h1>
+
+        {/* Tagline / Subtitle */}
+        <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#E5DACB]/90 font-light leading-relaxed mb-10">
+          Mengharmonisasikan raga, pikiran, dan jiwa melalui perpaduan warisan pijat tradisional Nusantara, 
+          refleksi meridian modern, dan aromaterapi herbal alami pilihan.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-16">
+          <button
+            onClick={onBookClick}
+            className="w-full sm:w-auto bg-[#889D35] hover:bg-[#6E8027] text-white px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 transform hover:-translate-y-0.5"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Reservasi Kunjungan</span>
+          </button>
+          <a
+            href="#layanan"
+            className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#F8F5F1] border border-[#D2C0A7]/40 px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold backdrop-blur-sm transition-all duration-300 text-center"
+          >
+            Eksplorasi Perawatan
+          </a>
+        </div>
+
+        {/* Trust Badges Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-white/15 max-w-4xl mx-auto text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
+              <ShieldCheck className="w-5 h-5 text-[#889D35]" />
+            </div>
+            <div>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">10+ Cabang Resmi</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">Bandung, Jakarta, Bali & Kota Lain</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
+              <Award className="w-5 h-5 text-[#889D35]" />
+            </div>
+            <div>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">100% Bersertifikasi</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">Terapis Terlatih Profesional</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
+              <Heart className="w-5 h-5 text-[#889D35]" />
+            </div>
+            <div>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">Minyak Esensial Murni</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">Aromaterapi Organik Alami</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
+              <Sparkles className="w-5 h-5 text-[#889D35]" />
+            </div>
+            <div>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">Ruang Privat Hening</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">Higienis, Tenang & Elegan</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Scroll Indicator */}
+      <a
+        href="#filosofi"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-[#D2C0A7] hover:text-white transition flex flex-col items-center gap-1 opacity-70 hover:opacity-100"
+        aria-label="Scroll ke konten"
+      >
+        <span className="text-[10px] uppercase tracking-widest">Gulir</span>
+        <ChevronDown className="w-4 h-4 animate-bounce" />
+      </a>
+    </section>
+  );
+};
+
