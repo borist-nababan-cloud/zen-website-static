@@ -52,3 +52,17 @@ Inspired by top-tier wellness retreats (`gayaspawellness.com` & `ame-spa.com`):
 - **Structured Data (JSON-LD)**: Schema.org `DaySpa` and `LocalBusiness` microdata embedded for rich snippets in Google search results.
 - **Build Verification**: Compiles with zero TypeScript or bundler errors via `npm run build` (`dist/index.html` ~4.7KB, optimized chunks for vendor, icons, and supabase).
 
+
+
+---
+
+## 5. Website Facilities & Multi-Branch Contact Sync (Updated Nov 01, 2026)
+- **Central Contact Synchronization (Kode Outlet '111')**:
+  - Top header hotline, footer operational contacts, and floating WhatsApp concierge dynamically ingest verified contact details (`no_wa: 082367867000`, `no_telp: 022-2003788`, and head office address) directly from `master_outlet` where `kode_outlet = '111'` (Zen Holding).
+- **Branch Facilities Integration (`web_facilities` & `web_outlet_facilities`)**:
+  - Public static web features an interactive **"Lihat Fasilitas Cabang"** modal on each outlet card in `OutletsSection.tsx`.
+  - Displays rich facility cards with matching Lucide icons (`Bath`, `Sparkles`, `Zap`, `ShowerHead`, `Armchair`, `Coffee`, `Wifi`, `Car`), category badges, custom branch notes (e.g. unit counts), and up to 2 high-resolution photos per facility.
+  - Temporary action button "Pilih & Reservasi di Cabang Ini" on the outlet cards is cleanly hidden as requested.
+- **WHM Admin Panel Integration**:
+  - Menu group "Web Data" and submenu "Master Fasilitas" (`/web/facilities`) in `frontend\warehousemanagement` allows admin roles `[5, 8, 18, 13]` to manage the master catalog.
+  - Outlet admins (Role 6) manage active branch facilities via `OutletInfoPage.tsx`.

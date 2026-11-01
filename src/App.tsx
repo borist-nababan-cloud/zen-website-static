@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { Outlet, Service } from './types';
-import { fetchPublicOutlets, fetchPublicServices } from './lib/supabaseClient';
+import type { Outlet, Service, OutletFacility } from './types';
+import {
+  fetchPublicOutlets,
+  fetchPublicServices,
+  fetchHoldingContact,
+  fetchOutletFacilities
+} from './lib/supabaseClient';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { PhilosophySection } from './components/PhilosophySection';
@@ -15,6 +20,8 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 export function App() {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [holdingContact, setHoldingContact] = useState<Outlet | null>(null);
+  const [outletFacilities, setOutletFacilities] = useState<OutletFacility[]>([]);
   const [isLoadingOutlets, setIsLoadingOutlets] = useState<boolean>(true);
   const [isLoadingServices, setIsLoadingServices] = useState<boolean>(true);
 
@@ -24,17 +31,23 @@ export function App() {
 
   useEffect(() => {
     async function loadData() {
-      // 1. Fetch public outlets strictly querying public columns
+      // 1. Fetch holding contact (kode_outlet = '111') for Header, Footer, and Floating WhatsApp
+      fetchHoldingContact().then(setHoldingContact);
+
+      // 2. Fetch public outlets strictly querying public columns
       setIsLoadingOutlets(true);
       const outletsData = await fetchPublicOutlets();
       setOutlets(outletsData);
       setIsLoadingOutlets(false);
 
-      // 2. Fetch public services
+      // 3. Fetch public services
       setIsLoadingServices(true);
       const servicesData = await fetchPublicServices();
       setServices(servicesData);
       setIsLoadingServices(false);
+
+      // 4. Fetch outlet facilities mappings
+      fetchOutletFacilities().then(setOutletFacilities);
     }
 
     loadData();
@@ -59,8 +72,8 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F5F1] text-[#3C3C32] font-sans flex flex-col selection:bg-[#889D35] selection:text-white">
-      {/* Navigation */}
-      <Navbar onBookClick={scrollToReservation} />
+      {/* Navigation with dynamic Holding Contact (Kode 111) */}
+      <Navbar onBookClick={scrollToReservation} holdingContact={holdingContact} />
 
       {/* Main Content Sections */}
       <main className="flex-1">
@@ -77,9 +90,10 @@ export function App() {
           onSelectService={handleSelectService}
         />
 
-        {/* 4. Outlets Directory & Locator */}
+        {/* 4. Outlets Directory & Locator with "Lihat Fasilitas" Modal */}
         <OutletsSection
           outlets={outlets}
+          outletFacilities={outletFacilities}
           isLoading={isLoadingOutlets}
           onSelectOutlet={handleSelectOutlet}
         />
@@ -99,14 +113,13 @@ export function App() {
         <TestimonialsSection />
       </main>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer with dynamic Holding Contact (Kode 111) */}
+      <Footer holdingContact={holdingContact} />
 
-      {/* Sticky Concierge Floating Button */}
-      <FloatingWhatsApp />
+      {/* Sticky Concierge Floating Button with dynamic Holding WhatsApp */}
+      <FloatingWhatsApp holdingContact={holdingContact} />
     </div>
   );
 }
 
 export default App;
-

@@ -28,6 +28,30 @@ export interface Service {
   sort_order: number;
 }
 
+export interface Facility {
+  id: string;
+  facility_code: string;
+  name: string;
+  category: string;
+  description?: string | null;
+  icon_name?: string | null;
+  image_url_1?: string | null;
+  image_url_2?: string | null;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface OutletFacility {
+  id: string;
+  kode_outlet: string;
+  facility_id: string;
+  custom_notes?: string | null;
+  custom_image_url_1?: string | null;
+  custom_image_url_2?: string | null;
+  is_available: boolean;
+  facility?: Facility;
+}
+
 export interface ReservationFormData {
   customer_name: string;
   phone: string;
@@ -38,4 +62,3 @@ export interface ReservationFormData {
   guest_count: number;
   notes?: string;
 }
-

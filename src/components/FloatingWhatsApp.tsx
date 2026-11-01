@@ -1,10 +1,18 @@
 import React from 'react';
+import type { Outlet } from '../types';
 import { MessageSquare } from 'lucide-react';
 
-export const FloatingWhatsApp: React.FC = () => {
+interface FloatingWhatsAppProps {
+  holdingContact?: Outlet | null;
+}
+
+export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ holdingContact }) => {
+  const rawWa = holdingContact?.no_wa || '082367867000';
+  const cleanWa = rawWa.replace(/[^0-9]/g, '').replace(/^0/, '62');
+
   return (
     <a
-      href="https://wa.me/628122000168?text=Halo%20Concierge%20Zen%20Family%20Spa,%20saya%20ingin%20bertanya%20seputar%20layanan%20dan%20reservasi"
+      href={`https://wa.me/${cleanWa}?text=Halo%20Concierge%20Zen%20Family%20Spa,%20saya%20ingin%20bertanya%20seputar%20layanan%20dan%20reservasi`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat WhatsApp Concierge Zen Family Spa"
@@ -26,4 +34,3 @@ export const FloatingWhatsApp: React.FC = () => {
     </a>
   );
 };
-

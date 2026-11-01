@@ -1,7 +1,18 @@
 import React from 'react';
+import type { Outlet } from '../types';
 import { Phone, Mail, MapPin, Clock, Heart, Shield } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  holdingContact?: Outlet | null;
+}
+
+export const Footer: React.FC<FooterProps> = ({ holdingContact }) => {
+  const rawWa = holdingContact?.no_wa || '082367867000';
+  const cleanWa = rawWa.replace(/[^0-9]/g, '').replace(/^0/, '62');
+  const displayWa = holdingContact?.no_wa || '+62 823-6786-7000';
+  const displayPhone = holdingContact?.no_telp || '022-2003788';
+  const displayAddress = holdingContact?.alamat || 'Jl. Surya Sumantri No. 182, Bandung, Jawa Barat';
+  const displayEmail = holdingContact?.email || 'info@zenfamilyspa.id';
   return (
     <footer className="bg-[#25251F] text-[#D2C0A7] pt-20 pb-12 border-t border-[#3C3C32]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,19 +106,25 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#889D35] shrink-0" />
-                <a href="https://wa.me/628122000168" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
-                  WhatsApp: +62 812-2000-168
+                <a href={`https://wa.me/${cleanWa}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                  WhatsApp: {displayWa}
+                </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#889D35] shrink-0" />
+                <a href={`tel:${displayPhone.replace(/[^0-9]/g, '')}`} className="hover:text-white transition">
+                  Telepon: {displayPhone}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#889D35] shrink-0" />
-                <a href="mailto:info@zenfamilyspa.id" className="hover:text-white transition">
-                  info@zenfamilyspa.id
+                <a href={`mailto:${displayEmail}`} className="hover:text-white transition">
+                  {displayEmail}
                 </a>
               </div>
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#889D35] shrink-0 mt-0.5" />
-                <span>Kantor Pusat: Jl. Sukajadi No. 168, Bandung, Jawa Barat</span>
+                <span>Kantor Pusat: {displayAddress}</span>
               </div>
             </div>
           </div>

@@ -25,20 +25,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onBookClick }) => {
         {/* Subtle Top Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#889D35]/25 border border-[#889D35]/40 text-[#D2C0A7] text-xs uppercase tracking-widest font-semibold mb-6 animate-fadeIn">
           <Sparkles className="w-3.5 h-3.5 text-[#889D35]" />
-          <span>The Sanctuary of Mindful Rejuvenation</span>
+          <span>Embodying Mindful Wellness</span>
         </div>
 
         {/* Main Headline */}
         <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.15] text-[#F8F5F1] mb-6 tracking-tight">
-          Kembali ke Titik Nol, <br />
+          Reset Your Rhythm<br />
           <span className="italic font-light text-[#D2C0A7]">
-            Rasakan Kedamaian Hakiki
+            Find your ZEN
           </span>
         </h1>
 
         {/* Tagline / Subtitle */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#E5DACB]/90 font-light leading-relaxed mb-10">
-          Mengharmonisasikan raga, pikiran, dan jiwa melalui perpaduan warisan pijat tradisional Nusantara, 
+          Mengharmonisasikan raga, pikiran, dan jiwa melalui perpaduan warisan pijat tradisional Nusantara,
           refleksi meridian modern, dan aromaterapi herbal alami pilihan.
         </p>
 

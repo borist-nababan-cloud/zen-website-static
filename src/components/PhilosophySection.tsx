@@ -5,26 +5,26 @@ export const PhilosophySection: React.FC = () => {
   return (
     <section id="filosofi" className="py-24 sm:py-32 bg-[#F8F5F1] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <p className="text-xs uppercase tracking-widest text-[#889D35] font-semibold mb-3">
             Filosofi & Nilai Zen
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#3C3C32] font-normal leading-tight mb-6">
-            Oase Ketenangan di Tengah <br />
+            Ketenangan di Tengah <br />
             <span className="italic font-light text-[#6E8027]">Kehidupan Modern</span>
           </h2>
           <div className="w-16 h-[2px] bg-[#889D35] mx-auto mb-6" />
           <p className="text-sm sm:text-base text-[#717163] leading-relaxed">
-            Terinspirasi dari harmoni alam dan kearifan tradisional Nusantara, Zen Family Spa menghadirkan 
+            Terinspirasi dari harmoni alam dan kearifan tradisional Nusantara, Zen Family Spa menghadirkan
             tempat perlindungan batin untuk memulihkan energi, melepaskan lelah, dan memperbarui vitalitas tubuh Anda.
           </p>
         </div>
 
         {/* 2-Column Storytelling Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-20">
-          
+
           {/* Left Column: Visual Composition with overlapping luxury cards */}
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/5] max-w-md mx-auto lg:max-w-none">
@@ -72,7 +72,7 @@ export const PhilosophySection: React.FC = () => {
                 Tiga Pilar Keseimbangan Zen
               </h3>
               <p className="text-sm text-[#717163] leading-relaxed">
-                Setiap detik kunjungan Anda di Zen dirancang untuk memberikan kenyamanan tanpa kompromi, 
+                Setiap detik kunjungan Anda di Zen dirancang untuk memberikan kenyamanan tanpa kompromi,
                 mulai dari tegukan pertama teh jahe hangat hingga akhir sesi perawatan.
               </p>
             </div>
@@ -88,7 +88,7 @@ export const PhilosophySection: React.FC = () => {
                     1. Sentuhan Terapis Berjiwa (Mindful Touch)
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Terapis kami menjalani pelatihan berkala berstandar nasional, menguasai anatomi otot dan 
+                    Terapis kami menjalani pelatihan berkala berstandar nasional, menguasai anatomi otot dan
                     titik akupresur untuk melancarkan sumbatan energi dengan tekanan yang tepat sesuai preferensi Anda.
                   </p>
                 </div>
@@ -104,7 +104,7 @@ export const PhilosophySection: React.FC = () => {
                     2. Ramuan Herbal Murni Tanpa Kimia Sintetis
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Kami hanya menggunakan minyak pijat berbahan dasar tumbuhan nabati murni dan lulur beras tradisional 
+                    Kami hanya menggunakan minyak pijat berbahan dasar tumbuhan nabati murni dan lulur beras tradisional
                     yang menutrisi kulit secara mendalam serta aman untuk kulit sensitif.
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export const PhilosophySection: React.FC = () => {
                     3. Suasana Hening & Standar Higienitas Prima
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Sprei, kain sarung, dan handuk disterilisasi setiap kali selesai digunakan. Ruangan privat dengan 
+                    Sprei, kain sarung, dan handuk disterilisasi setiap kali selesai digunakan. Ruangan privat dengan
                     aroma serai yang menenangkan dan alunan musik meditatif menciptakan atmosfer ketenangan mutlak.
                   </p>
                 </div>

@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import type { Outlet } from '../types';
 import { Calendar, Menu, X, Phone, Clock, MapPin, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   onBookClick: () => void;
+  holdingContact?: Outlet | null;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onBookClick }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onBookClick, holdingContact }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const rawWa = holdingContact?.no_wa || '082367867000';
+  const cleanWa = rawWa.replace(/[^0-9]/g, '').replace(/^0/, '62');
+  const displayWa = holdingContact?.no_wa || '+62 823-6786-7000';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,12 +47,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onBookClick }) => {
           </div>
           <div className="flex items-center gap-4 text-xs font-medium">
             <a 
-              href="https://wa.me/628122000168?text=Halo%20Zen%20Family%20Spa,%20saya%20ingin%20konsultasi%20perawatan" 
+              href={`https://wa.me/${cleanWa}?text=Halo%20Zen%20Family%20Spa,%20saya%20ingin%20konsultasi%20perawatan`} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="hover:text-white transition flex items-center gap-1 text-[#889D35]"
             >
-              <Phone className="w-3.5 h-3.5" /> Hotline WhatsApp: +62 812-2000-168
+              <Phone className="w-3.5 h-3.5" /> Hotline WhatsApp: {displayWa}
             </a>
           </div>
         </div>

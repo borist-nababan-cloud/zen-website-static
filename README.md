@@ -41,3 +41,4 @@ npm run dev
 npm run build
 ```
 The output will be generated in `dist/` and can be uploaded directly to any static web server or shared hosting public directory.
+

@@ -1,10 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Outlet, Service, ReservationFormData } from '../types';
+import type { Outlet, Service, OutletFacility, ReservationFormData } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ihdlwogvjfgawgsalgng.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_KobV2o95Ymfem77b4zVBJg_E_onldRD';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Fallback Holding Profile (Kode 111) for Hotline & Central Contact
+export const fallbackHolding: Outlet = {
+  kode_outlet: '111',
+  name_outlet: 'ZEN HOLDING (HEAD OFFICE)',
+  alamat: 'Jl. Surya Sumantri No. 182, Sukawarna, Kec. Sukajadi',
+  city: 'Bandung',
+  province: 'Jawa Barat',
+  no_telp: '022-2003788',
+  no_wa: '082367867000',
+  email: 'info@zenfamilyspa.id'
+};
 
 // Fallback Outlets for instant offline rendering / network resilience
 export const fallbackOutlets: Outlet[] = [
@@ -15,34 +27,34 @@ export const fallbackOutlets: Outlet[] = [
     city: 'Bandung',
     province: 'Jawa Barat',
     no_telp: '022-2031768',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '103',
     name_outlet: 'ZEN SURYA SUMANTRI',
-    alamat: 'Jl. Surya Sumantri No. 18, Sukagalih, Kec. Sukajadi',
+    alamat: 'Jl. Surya Sumantri No. 18, Sukawarna, Kec. Sukajadi',
     city: 'Bandung',
     province: 'Jawa Barat',
     no_telp: '022-2003788',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '105',
     name_outlet: 'ZEN GUNAWARMAN',
-    alamat: 'Jl. Gunawarman No. 43, Kebayoran Baru',
+    alamat: 'Jl. Gunawarman No. 43, Senopati, Kebayoran Baru',
     city: 'Jakarta Selatan',
     province: 'DKI Jakarta',
     no_telp: '021-7262375',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '106',
     name_outlet: 'ZEN PAKUBUWONO',
-    alamat: 'Jl. Pakubuwono VI No. 35, Kebayoran Baru',
+    alamat: 'Jl. Pakubuwono VI No. 35, Gunung, Kebayoran Baru',
     city: 'Jakarta Selatan',
     province: 'DKI Jakarta',
     no_telp: '021-7221389',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '110',
@@ -51,25 +63,25 @@ export const fallbackOutlets: Outlet[] = [
     city: 'Badung',
     province: 'Bali',
     no_telp: '0361-8475900',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '112',
     name_outlet: 'ZEN DEPOK',
-    alamat: 'Jl. Margonda Raya No. 250, Kemiri Muka',
+    alamat: 'Jl. Margonda Raya No. 250, Kemiri Muka, Beji',
     city: 'Depok',
     province: 'Jawa Barat',
     no_telp: '021-77202350',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '115',
     name_outlet: 'ZEN MAKASSAR',
-    alamat: 'Jl. Pelita Raya, Panakkukang',
+    alamat: 'Jl. Pelita Raya No. 46, Balla Parang, Kec. Rappocini',
     city: 'Makassar',
     province: 'Sulawesi Selatan',
     no_telp: '0411-450980',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '116',
@@ -78,25 +90,25 @@ export const fallbackOutlets: Outlet[] = [
     city: 'Bandung',
     province: 'Jawa Barat',
     no_telp: '022-5208990',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   },
   {
     kode_outlet: '117',
     name_outlet: 'ZEN KOTA BARU PARAHYANGAN',
-    alamat: 'Jl. Parahyangan Raya No. 2 Kav. 6B, Padalarang',
+    alamat: 'Jl. Parahyangan Raya No. 2 Kav. 6B, Kertajaya, Padalarang',
     city: 'Bandung Barat',
     province: 'Jawa Barat',
     no_telp: '022-86813500',
-    no_wa: '628122000168'
+    no_wa: '087877517000'
   },
   {
     kode_outlet: '107',
     name_outlet: 'ZEN PALU',
-    alamat: 'Jl. Moh. Hatta, Lolu Utara, Palu Timur',
+    alamat: 'Jl. Moh. Hatta No. 16, Lolu Utara, Kec. Palu Timur',
     city: 'Palu',
     province: 'Sulawesi Tengah',
     no_telp: '0451-423588',
-    no_wa: '628122000168'
+    no_wa: '08122000168'
   }
 ];
 
@@ -183,6 +195,31 @@ export const fallbackServices: Service[] = [
 ];
 
 /**
+ * Fetch holding contact info (kode_outlet = '111') for Header, Footer, and Floating WhatsApp.
+ */
+export async function fetchHoldingContact(): Promise<Outlet> {
+  try {
+    const { data, error } = await supabase
+      .from('master_outlet')
+      .select('kode_outlet, name_outlet, alamat, city, province, no_telp, no_wa, email, location')
+      .eq('kode_outlet', '111')
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Supabase fetchHoldingContact notice:', error.message);
+      return fallbackHolding;
+    }
+
+    if (data) {
+      return data as Outlet;
+    }
+  } catch (err) {
+    console.warn('Network issue fetching holding contact, using fallback:', err);
+  }
+  return fallbackHolding;
+}
+
+/**
  * Fetch public outlets from Supabase.
  * Strictly queries only public fields and filters active = true.
  */
@@ -235,6 +272,59 @@ export async function fetchPublicServices(): Promise<Service[]> {
 }
 
 /**
+ * Fetch outlet facilities mappings from web_outlet_facilities joined with web_facilities.
+ */
+export async function fetchOutletFacilities(): Promise<OutletFacility[]> {
+  try {
+    const { data, error } = await supabase
+      .from('web_outlet_facilities')
+      .select(`
+        id,
+        kode_outlet,
+        facility_id,
+        custom_notes,
+        custom_image_url_1,
+        custom_image_url_2,
+        is_available,
+        facility:web_facilities (
+          id,
+          facility_code,
+          name,
+          category,
+          description,
+          icon_name,
+          image_url_1,
+          image_url_2,
+          is_active,
+          sort_order
+        )
+      `)
+      .eq('is_available', true);
+
+    if (error) {
+      console.warn('Supabase fetchOutletFacilities notice:', error.message);
+      return [];
+    }
+
+    if (data && data.length > 0) {
+      return data.map((item: any) => ({
+        id: item.id,
+        kode_outlet: item.kode_outlet,
+        facility_id: item.facility_id,
+        custom_notes: item.custom_notes,
+        custom_image_url_1: item.custom_image_url_1,
+        custom_image_url_2: item.custom_image_url_2,
+        is_available: item.is_available,
+        facility: Array.isArray(item.facility) ? item.facility[0] : item.facility
+      })) as OutletFacility[];
+    }
+  } catch (err) {
+    console.warn('Network issue fetching outlet facilities:', err);
+  }
+  return [];
+}
+
+/**
  * Submit reservation inquiry directly to public.crm_leads.
  */
 export async function submitReservationLead(lead: ReservationFormData): Promise<{ success: boolean; error?: string }> {
@@ -264,4 +354,3 @@ export async function submitReservationLead(lead: ReservationFormData): Promise<
     return { success: false, error: err?.message || 'Terjadi gangguan koneksi saat mengirim reservasi.' };
   }
 }
-

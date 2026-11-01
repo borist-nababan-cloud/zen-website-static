@@ -15,3 +15,8 @@
 - Meta tags for every treatment page.
 - Clean URL structure.
 - Implementation of Schema.org (LocalBusiness) for each outlet.
+
+
+## 4. Database Prefix Standard (`web_*****`)
+- Every database entity specifically backing website features (e.g. facilities, articles, banners) MUST have the prefix `web_*****` (e.g. `web_facilities`, `web_outlet_facilities`).
+- All queries from static web must consume public views or tables with strict RLS public read policies (`anon` role).
