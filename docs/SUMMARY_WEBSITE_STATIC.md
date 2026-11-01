@@ -66,3 +66,15 @@ Inspired by top-tier wellness retreats (`gayaspawellness.com` & `ame-spa.com`):
 - **WHM Admin Panel Integration**:
   - Menu group "Web Data" and submenu "Master Fasilitas" (`/web/facilities`) in `frontend\warehousemanagement` allows admin roles `[5, 8, 18, 13]` to manage the master catalog.
   - Outlet admins (Role 6) manage active branch facilities via `OutletInfoPage.tsx`.
+
+---
+
+## 6. Dynamic Gallery & Storage Integration (`web_galleries` & `web-gallery`)
+- **Supabase Storage Bucket (`web-gallery`)**: Public bucket (5 MB limit, JPG/PNG/WebP) storing authentic Zen ambiance photos.
+- **Dynamic Ambiance Grid (`GallerySection.tsx`)**: Queries `public.web_galleries` where `active = true` ordered by `sort_order ASC`.
+- **WHM Management (`/web/gallery`)**: Admin roles `[5, 8, 18, 13]` can upload photos directly from devices to Supabase Storage, edit captions, and perform one-click instant toggling between `active = true` (ON) and `active = false` (OFF).
+
+## 7. Operational Environment Standard (Staging Mode)
+- **Current Active Mode**: **STAGING** (`https://okchlapizmhoueeeldrh.supabase.co`).
+- Both the Static Website (`frontend\website`) and WHM App (`frontend\warehousemanagement`) are deliberately configured to **Staging Mode** during current testing and quality assurance.
+- Production environment (`https://ihdlwogvjfgawgsalgng.supabase.co`) will be switched to only when the user explicitly instructs deployment readiness.
