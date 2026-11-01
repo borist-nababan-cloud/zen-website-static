@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import type { WebMember } from '../types';
-import { updateMemberProfile } from '../lib/supabaseClient';
-import { User, CheckCircle2, Loader2, X, ShieldCheck } from 'lucide-react';
+import {
+  updateMemberProfile,
+  normalizePhoneWa,
+  checkMemberPhoneWaAvailable
+} from '../lib/supabaseClient';
+import {
+  User,
+  CheckCircle2,
+  Loader2,
+  X,
+  ShieldCheck,
+  AlertCircle
+} from 'lucide-react';
 
 interface MemberProfileModalProps {
   isOpen: boolean;
@@ -28,6 +39,9 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isCheckingPhone, setIsCheckingPhone] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [phoneAvailable, setPhoneAvailable] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -45,10 +59,54 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
       });
       setSuccessMsg('');
       setErrorMsg('');
+      setPhoneError('');
+      setPhoneAvailable(false);
     }
   }, [member, isOpen]);
 
   if (!isOpen || !member) return null;
+
+  const handlePhoneBlur = async () => {
+    const rawPhone = formData.phone_wa.trim();
+    if (!rawPhone) {
+      setPhoneError('');
+      setPhoneAvailable(false);
+      return;
+    }
+
+    const normalized = normalizePhoneWa(rawPhone);
+    if (normalized.length < 9) {
+      setPhoneError('Nomor WhatsApp minimal 9 digit angka.');
+      setPhoneAvailable(false);
+      return;
+    }
+
+    const currentNormalized = member.phone_wa ? normalizePhoneWa(member.phone_wa) : '';
+    // If phone is same as current member profile, it's valid
+    if (normalized === currentNormalized) {
+      setPhoneError('');
+      setPhoneAvailable(false);
+      return;
+    }
+
+    setIsCheckingPhone(true);
+    setPhoneError('');
+    setPhoneAvailable(false);
+
+    const checkRes = await checkMemberPhoneWaAvailable(rawPhone, member.id);
+    setIsCheckingPhone(false);
+
+    if (!checkRes.available) {
+      setPhoneError(
+        checkRes.error ||
+          'Nomor WhatsApp ini sudah digunakan oleh member lain. Silakan gunakan nomor yang berbeda.'
+      );
+      setPhoneAvailable(false);
+    } else {
+      setPhoneError('');
+      setPhoneAvailable(true);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,13 +115,41 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
       return;
     }
 
+    const rawPhone = formData.phone_wa.trim();
+    let cleanedPhone: string | null = null;
+
+    if (rawPhone) {
+      cleanedPhone = normalizePhoneWa(rawPhone);
+      if (cleanedPhone.length < 9) {
+        setErrorMsg('Nomor WhatsApp tidak valid (minimal 9 digit angka).');
+        return;
+      }
+
+      // Check if phone was changed compared to current profile
+      const currentNormalized = member.phone_wa ? normalizePhoneWa(member.phone_wa) : '';
+      if (cleanedPhone !== currentNormalized) {
+        setIsSaving(true);
+        setErrorMsg('');
+        const checkRes = await checkMemberPhoneWaAvailable(rawPhone, member.id);
+        if (!checkRes.available) {
+          setIsSaving(false);
+          const msg =
+            checkRes.error ||
+            'Nomor WhatsApp ini sudah digunakan oleh member lain. Silakan gunakan nomor yang berbeda.';
+          setErrorMsg(msg);
+          setPhoneError(msg);
+          return;
+        }
+      }
+    }
+
     setIsSaving(true);
     setErrorMsg('');
     setSuccessMsg('');
 
     const res = await updateMemberProfile(member.id, {
       full_name: formData.full_name.trim(),
-      phone_wa: formData.phone_wa.trim() || null,
+      phone_wa: cleanedPhone,
       fixline: formData.fixline.trim() || null,
       shipping_address: formData.shipping_address.trim() || null,
       city: formData.city.trim() || null,
@@ -75,6 +161,8 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
     setIsSaving(false);
     if (res.success && res.data) {
       setSuccessMsg('Profil member berhasil diperbarui!');
+      setPhoneError('');
+      setPhoneAvailable(false);
       onProfileUpdated(res.data);
       setTimeout(() => {
         setSuccessMsg('');
@@ -140,8 +228,9 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
           </div>
         )}
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs">
-            {errorMsg}
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{errorMsg}</span>
           </div>
         )}
 
@@ -180,16 +269,47 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#3C3C32]">
-                Nomor WhatsApp Aktif
+              <label className="text-xs font-semibold text-[#3C3C32] flex items-center justify-between">
+                <span>Nomor WhatsApp Aktif</span>
+                {isCheckingPhone && (
+                  <span className="text-[10px] text-[#889D35] flex items-center gap-1 font-normal">
+                    <Loader2 className="w-3 h-3 animate-spin" /> Memeriksa...
+                  </span>
+                )}
               </label>
               <input
                 type="tel"
                 value={formData.phone_wa}
-                onChange={(e) => setFormData({ ...formData, phone_wa: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, phone_wa: e.target.value });
+                  if (phoneError) setPhoneError('');
+                  if (phoneAvailable) setPhoneAvailable(false);
+                }}
+                onBlur={handlePhoneBlur}
                 placeholder="Contoh: 081234567890"
-                className="w-full h-10 px-3.5 rounded-xl border border-[#D2C0A7] bg-white text-xs text-[#3C3C32] focus:outline-none focus:ring-2 focus:ring-[#889D35]"
+                className={`w-full h-10 px-3.5 rounded-xl border bg-white text-xs text-[#3C3C32] focus:outline-none focus:ring-2 ${
+                  phoneError
+                    ? 'border-red-400 focus:ring-red-300'
+                    : phoneAvailable
+                    ? 'border-emerald-400 focus:ring-emerald-300'
+                    : 'border-[#D2C0A7] focus:ring-[#889D35]'
+                }`}
               />
+              {phoneError ? (
+                <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{phoneError}</span>
+                </p>
+              ) : phoneAvailable ? (
+                <p className="text-[11px] text-emerald-600 mt-1 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>Nomor WhatsApp tersedia.</span>
+                </p>
+              ) : (
+                <p className="text-[10px] text-[#A8A89A] mt-1">
+                  Nomor WhatsApp unik digunakan untuk identifikasi member Zen.
+                </p>
+              )}
             </div>
           </div>
 
@@ -282,7 +402,7 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSaving}
+              disabled={isSaving || isCheckingPhone || !!phoneError}
               className="bg-[#889D35] hover:bg-[#73852C] text-white px-7 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}

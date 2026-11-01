@@ -386,7 +386,15 @@ export async function submitReservationLead(lead: ReservationFormData): Promise<
       ]);
 
     if (error) {
-      return { success: false, error: error.message };
+      let friendlyError = error.message;
+      if (
+        error.message.includes('sudah terdaftar') ||
+        error.message.includes('duplicate') ||
+        error.code === '23505'
+      ) {
+        friendlyError = 'Nomor WhatsApp ini sudah digunakan oleh member lain. Silakan gunakan nomor WhatsApp Anda yang berbeda.';
+      }
+      return { success: false, error: friendlyError };
     }
     return { success: true };
   } catch (err: any) {
@@ -678,6 +686,65 @@ export async function fetchMemberProfile(authUserId: string, email?: string, ful
 /**
  * Update member profile.
  */
+/**
+ * Normalizes an Indonesian phone number to digits only (e.g., 081234567890).
+ */
+export function normalizePhoneWa(phone: string): string {
+  let cleaned = phone.replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('62')) {
+    cleaned = '0' + cleaned.slice(2);
+  }
+  return cleaned;
+}
+
+/**
+ * Checks if a WhatsApp number is available (not used by any other member).
+ */
+export async function checkMemberPhoneWaAvailable(phoneWa: string, currentMemberId: string): Promise<{ available: boolean; error?: string }> {
+  const normalized = normalizePhoneWa(phoneWa);
+  if (!normalized) {
+    return { available: true };
+  }
+
+  if (normalized.length < 9) {
+    return { available: false, error: 'Nomor WhatsApp minimal 9 digit angka.' };
+  }
+
+  try {
+    // 1. Try RPC check function in Supabase
+    const { data, error } = await supabase.rpc('check_member_phone_wa_available', {
+      p_member_id: currentMemberId,
+      p_phone_wa: normalized
+    });
+
+    if (!error && typeof data === 'boolean') {
+      return { available: data };
+    }
+
+    // 2. Fallback query
+    const { data: members, error: queryError } = await supabase
+      .from('web_members')
+      .select('id, phone_wa')
+      .neq('id', currentMemberId)
+      .not('phone_wa', 'is', null);
+
+    if (queryError) {
+      console.warn('Phone check fallback notice:', queryError.message);
+      return { available: true };
+    }
+
+    const isTaken = (members || []).some((m: any) => {
+      if (!m.phone_wa) return false;
+      return normalizePhoneWa(m.phone_wa) === normalized;
+    });
+
+    return { available: !isTaken };
+  } catch (err: any) {
+    console.warn('Exception during phone check:', err);
+    return { available: true };
+  }
+}
+
 export async function updateMemberProfile(memberId: string, updates: Partial<WebMember>): Promise<{ success: boolean; data?: WebMember; error?: string }> {
   try {
     const { data, error } = await supabase
