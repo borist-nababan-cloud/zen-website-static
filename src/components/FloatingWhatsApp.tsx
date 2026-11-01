@@ -25,7 +25,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ holdingConta
       </div>
       <div className="hidden sm:flex flex-col text-left">
         <span className="text-[10px] uppercase font-bold tracking-wider leading-tight text-white/90">
-          Concierge Spa
+          HAI ZEN
         </span>
         <span className="text-xs font-semibold leading-tight">
           Konsultasi WhatsApp

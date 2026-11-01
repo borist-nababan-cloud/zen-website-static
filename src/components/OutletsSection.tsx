@@ -70,25 +70,25 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
   // Get active facilities for modal
   const currentModalFacilities = selectedOutletForModal
     ? outletFacilities.filter(
-        (of) => of.kode_outlet === selectedOutletForModal.kode_outlet && of.is_available && of.facility
-      )
+      (of) => of.kode_outlet === selectedOutletForModal.kode_outlet && of.is_available && of.facility
+    )
     : [];
 
   return (
     <section id="outlet" className="py-24 sm:py-32 bg-[#F8F5F1] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <p className="text-xs uppercase tracking-widest text-[#889D35] font-semibold mb-3">
             Jaringan Cabang Resmi
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#3C3C32] font-normal leading-tight mb-4">
-            Temukan Oase Zen Terdekat
+            Temukan Cabang Zen Terdekat
           </h2>
           <div className="w-16 h-[2px] bg-[#889D35] mx-auto mb-5" />
           <p className="text-sm sm:text-base text-[#717163] leading-relaxed">
-            Hadir di 10+ lokasi strategis di berbagai kota besar Indonesia, setiap cabang Zen Family Spa 
+            Hadir di 10+ lokasi strategis di berbagai kota besar Indonesia, setiap cabang Zen Family Spa
             memberikan kenyamanan fasilitas VIP, ruang refleksi eksklusif, dan parkir luas.
           </p>
         </div>
@@ -104,11 +104,10 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
               <button
                 key={city}
                 onClick={() => setSelectedCity(city)}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all ${
-                  active
+                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all ${active
                     ? 'bg-[#3C3C32] text-[#D2C0A7] shadow-md'
                     : 'bg-white text-[#717163] hover:text-[#3C3C32] border border-[#E5DACB]'
-                }`}
+                  }`}
               >
                 {label}
               </button>
@@ -230,7 +229,7 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
         {selectedOutletForModal && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-[#E5DACB] animate-fadeIn max-h-[90vh] overflow-y-auto relative">
-              
+
               {/* Close Button */}
               <button
                 onClick={() => setSelectedOutletForModal(null)}

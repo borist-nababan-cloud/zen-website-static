@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import type { Outlet, Service, OutletFacility } from './types';
+import type { Outlet, Service, OutletFacility, WebMember } from './types';
+import type { User } from '@supabase/supabase-js';
 import {
+  supabase,
   fetchPublicOutlets,
   fetchPublicServices,
   fetchHoldingContact,
-  fetchOutletFacilities
+  fetchOutletFacilities,
+  fetchMemberProfile
 } from './lib/supabaseClient';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
@@ -14,6 +17,8 @@ import { OutletsSection } from './components/OutletsSection';
 // import { ReservationSection } from './components/ReservationSection';
 import { GallerySection } from './components/GallerySection';
 import { TestimonialsSection } from './components/TestimonialsSection';
+import { MemberProfileModal } from './components/MemberProfileModal';
+import { TestimonialModal } from './components/TestimonialModal';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
@@ -24,6 +29,54 @@ export function App() {
   const [outletFacilities, setOutletFacilities] = useState<OutletFacility[]>([]);
   const [isLoadingOutlets, setIsLoadingOutlets] = useState<boolean>(true);
   const [isLoadingServices, setIsLoadingServices] = useState<boolean>(true);
+
+  // Authentication & Member Profile state
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [memberProfile, setMemberProfile] = useState<WebMember | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState<boolean>(false);
+
+  const syncMember = async (user: User) => {
+    try {
+      const profile = await fetchMemberProfile(
+        user.id,
+        user.email,
+        user.user_metadata?.full_name,
+        user.user_metadata?.avatar_url
+      );
+      setMemberProfile(profile);
+    } catch (err) {
+      console.warn('Gagal sinkronisasi data member:', err);
+    }
+  };
+
+  useEffect(() => {
+    // 1. Initial Session Check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const user = session?.user ?? null;
+      setCurrentUser(user);
+      if (user) {
+        syncMember(user);
+      }
+    });
+
+    // 2. Auth State Change Listener
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user ?? null;
+      setCurrentUser(user);
+      if (user) {
+        syncMember(user);
+      } else {
+        setMemberProfile(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -49,6 +102,41 @@ export function App() {
     loadData();
   }, []);
 
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) {
+        console.error('Login Google Error:', error.message);
+        alert(`Gagal login dengan Google: ${error.message}`);
+      }
+    } catch (err: any) {
+      console.error('OAuth Exception:', err);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setCurrentUser(null);
+      setMemberProfile(null);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
+
+  const handleOpenTestimonial = () => {
+    if (!currentUser) {
+      handleGoogleLogin();
+    } else {
+      setIsTestimonialModalOpen(true);
+    }
+  };
+
   const scrollToOutlets = () => {
     const el = document.getElementById('outlet');
     if (el) {
@@ -58,8 +146,17 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F5F1] text-[#3C3C32] font-sans flex flex-col selection:bg-[#889D35] selection:text-white">
-      {/* Navigation with dynamic Holding Contact (Kode 111) */}
-      <Navbar onBookClick={scrollToOutlets} holdingContact={holdingContact} />
+      {/* Navigation with dynamic Holding Contact (Kode 111) and Member Auth */}
+      <Navbar
+        onBookClick={scrollToOutlets}
+        holdingContact={holdingContact}
+        currentUser={currentUser}
+        memberProfile={memberProfile}
+        onLoginGoogle={handleGoogleLogin}
+        onLogout={handleLogout}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onOpenTestimonial={handleOpenTestimonial}
+      />
 
       {/* Main Content Sections */}
       <main className="flex-1">
@@ -94,8 +191,12 @@ export function App() {
         {/* 6. Gallery Section */}
         <GallerySection />
 
-        {/* 7. Guest Testimonials */}
-        <TestimonialsSection />
+        {/* 7. Guest Testimonials with 5 Smile Ratings & Member submission */}
+        <TestimonialsSection
+          currentUser={currentUser}
+          onOpenTestimonial={handleOpenTestimonial}
+          onLoginGoogle={handleGoogleLogin}
+        />
       </main>
 
       {/* Footer with dynamic Holding Contact (Kode 111) */}
@@ -103,6 +204,29 @@ export function App() {
 
       {/* Sticky Concierge Floating Button with dynamic Holding WhatsApp */}
       <FloatingWhatsApp holdingContact={holdingContact} />
+
+      {/* Member Profile Modal */}
+      {memberProfile && (
+        <MemberProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          member={memberProfile}
+          onProfileUpdated={(updated) => setMemberProfile(updated)}
+        />
+      )}
+
+      {/* Write Testimonial Modal */}
+      {memberProfile && (
+        <TestimonialModal
+          isOpen={isTestimonialModalOpen}
+          onClose={() => setIsTestimonialModalOpen(false)}
+          member={memberProfile}
+          outlets={outlets}
+          onSubmitted={() => {
+            // Testimonial submitted successfully (pending WHM approval)
+          }}
+        />
+      )}
     </div>
   );
 }
