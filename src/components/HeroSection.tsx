@@ -1,11 +1,11 @@
 import React from 'react';
-import { Calendar, ChevronDown, Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
+import { ChevronDown, Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
 
 interface HeroSectionProps {
-  onBookClick: () => void;
+  onBookClick?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onBookClick }) => {
+export const HeroSection: React.FC<HeroSectionProps> = () => {
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#25251F]">
       {/* Background Image with Slow Subtle Ambient Overlay */}
@@ -44,18 +44,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onBookClick }) => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-16">
-          <button
-            onClick={onBookClick}
-            className="w-full sm:w-auto bg-[#889D35] hover:bg-[#6E8027] text-white px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 transform hover:-translate-y-0.5"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Reservasi Kunjungan</span>
-          </button>
           <a
             href="#layanan"
+            className="w-full sm:w-auto bg-[#889D35] hover:bg-[#6E8027] text-white px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 transform hover:-translate-y-0.5 text-center cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Eksplorasi Perawatan</span>
+          </a>
+          <a
+            href="#outlet"
             className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#F8F5F1] border border-[#D2C0A7]/40 px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold backdrop-blur-sm transition-all duration-300 text-center"
           >
-            Eksplorasi Perawatan
+            Temukan Cabang
           </a>
         </div>
 

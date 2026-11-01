@@ -16,7 +16,11 @@
 - Clean URL structure.
 - Implementation of Schema.org (LocalBusiness) for each outlet.
 
-
 ## 4. Database Prefix Standard (`web_*****`)
-- Every database entity specifically backing website features (e.g. facilities, articles, banners) MUST have the prefix `web_*****` (e.g. `web_facilities`, `web_outlet_facilities`).
+- Every database entity specifically backing website features (e.g. facilities, articles, banners, galleries) MUST have the prefix `web_*****` (e.g. `web_facilities`, `web_outlet_facilities`, `web_galleries`).
 - All queries from static web must consume public views or tables with strict RLS public read policies (`anon` role).
+
+## 5. Development & Testing Environment Mode
+- **Current Mode**: **STAGING** (`https://okchlapizmhoueeeldrh.supabase.co`).
+- Both the Static Website (`frontend/website`) and WHM App (`frontend/warehousemanagement`) MUST remain synchronized on **Staging Mode** during development and feature testing.
+- Switch to **Production Mode** (`https://ihdlwogvjfgawgsalgng.supabase.co`) ONLY when the user explicitly instructs that the website and WHM are ready for final public production deployment.

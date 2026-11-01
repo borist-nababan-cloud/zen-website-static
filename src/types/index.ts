@@ -14,18 +14,27 @@ export interface Outlet {
   } | string | null;
 }
 
+export interface ServiceOutletAvailability {
+  kode_outlet: string;
+  name_outlet: string;
+  city?: string | null;
+  no_wa?: string | null;
+  custom_notes?: string | null;
+}
+
 export interface Service {
   id: string;
   service_code: string;
   name: string;
   category: string;
   duration_minutes: number;
-  price: number;
-  description: string;
+  price?: number;
+  description?: string | null;
   benefits?: string | null;
   image_url?: string | null;
-  is_featured: boolean;
+  is_featured?: boolean;
   sort_order: number;
+  available_outlets?: ServiceOutletAvailability[];
 }
 
 export interface Facility {

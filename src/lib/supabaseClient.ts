@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Outlet, Service, OutletFacility, ReservationFormData, WebGalleryItem } from '../types';
+import type { Outlet, Service, OutletFacility, ReservationFormData, WebGalleryItem, ServiceOutletAvailability } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ihdlwogvjfgawgsalgng.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_KobV2o95Ymfem77b4zVBJg_E_onldRD';
@@ -112,85 +112,79 @@ export const fallbackOutlets: Outlet[] = [
   }
 ];
 
-// Fallback Services
+// Fallback Services (Without prices to prevent misperception across branches)
 export const fallbackServices: Service[] = [
   {
     id: '1',
-    service_code: 'ZEN-SIG-01',
-    name: 'The Royal Touch Ritual',
-    category: 'Signature Body Massage',
-    duration_minutes: 100,
-    price: 345000,
-    description: 'Perawatan holistik khas Zen yang memadukan pijatan jaringan dalam (deep tissue), akupresur meridian tradisional, dan kompres hangat aromaterapi serai organik.',
-    benefits: 'Meredakan ketegangan otot kronis, melancarkan peredaran darah, dan memulihkan kualitas tidur.',
+    service_code: 'SRV-MASSAGE-ROYAL',
+    name: 'The Royal Zen Body Massage',
+    category: 'Body Massage',
+    duration_minutes: 90,
+    description: 'Perpaduan harmonis teknik pijat relaksasi tradisional Jawa dan Bali untuk meredakan ketegangan otot secara mendalam.',
+    benefits: 'Melancarkan sirkulasi darah, meredakan kekakuan leher dan punggung, serta mengembalikan vitalitas tubuh.',
     image_url: './assets/gallery/carousel(1).jpg',
-    is_featured: true,
-    sort_order: 1
+    sort_order: 10,
+    available_outlets: []
   },
   {
     id: '2',
-    service_code: 'ZEN-SIG-02',
-    name: 'Zen Relaxing Massage 90\'',
-    category: 'Signature Body Massage',
-    duration_minutes: 90,
-    price: 290000,
-    description: 'Terapi pijat seluruh tubuh dengan usapan panjang berirama lembut menggunakan minyak esensial murni (Lavender, Lemongrass, atau Sandalwood).',
-    benefits: 'Menurunkan kadar hormon stres kortisol dan menenangkan sistem saraf pusat.',
-    image_url: './assets/gallery/carousel(2).jpg',
-    is_featured: true,
-    sort_order: 2
+    service_code: 'SRV-MASSAGE-HOTSTONE',
+    name: 'Volcanic Hot Stone Therapy',
+    category: 'Body Massage',
+    duration_minutes: 105,
+    description: 'Pijatan relaksasi menggunakan batu basal vulkanis hangat yang menyalurkan energi termal ke titik-titik meridian tubuh.',
+    benefits: 'Meredakan stres berat, menghangatkan sistem pencernaan, dan mengendurkan otot-otot tegang.',
+    image_url: './assets/gallery/hot-stone.png',
+    sort_order: 20,
+    available_outlets: []
   },
   {
     id: '3',
-    service_code: 'ZEN-SIG-03',
-    name: 'Volcanic Hot Stone Therapy',
-    category: 'Signature Body Massage',
-    duration_minutes: 120,
-    price: 380000,
-    description: 'Pijat relaksasi yang dipadukan dengan peletakan batu basal vulkanis hangat di titik cakra tubuh untuk menyalurkan energi panas menembus lapisan otot terdalam.',
-    benefits: 'Meluruhkan kekakuan sendi, membuang toksin tubuh, dan memberikan rasa relaksasi total.',
-    image_url: './assets/gallery/hot-stone.png',
-    is_featured: true,
-    sort_order: 3
+    service_code: 'SRV-MASSAGE-AROMA',
+    name: 'Aromatherapy Holistic Touch',
+    category: 'Body Massage',
+    duration_minutes: 90,
+    description: 'Ritual pijat relaksasi lembut dengan pilihan minyak esensial murni serai, lavender, atau kayu manis.',
+    benefits: 'Menenangkan pikiran yang lelah, membantu mengatasi insomnia, dan memberikan keharuman tubuh alami.',
+    image_url: './assets/gallery/carousel(2).jpg',
+    sort_order: 30,
+    available_outlets: []
   },
   {
     id: '4',
-    service_code: 'ZEN-REF-01',
-    name: 'Foot & Back Acupressure 90\'',
-    category: 'Reflexology',
-    duration_minutes: 90,
-    price: 240000,
-    description: 'Kombinasi stimulasi titik refleksi telapak kaki dengan pijat punggung, leher, dan bahu pada kursi recliner mewah berposisi ergonomis.',
-    benefits: 'Meringankan kelelahan setelah beraktivitas, memulihkan stamina, dan melegakan ketegangan leher/pundak.',
+    service_code: 'SRV-REFLEX-ESSENTIAL',
+    name: 'Zen Essential Foot Reflexology',
+    category: 'Foot Reflexology',
+    duration_minutes: 60,
+    description: 'Stimulasi akupresur pada zona refleksi telapak kaki untuk menyeimbangkan fungsi organ vital tubuh.',
+    benefits: 'Mengatasi pegal pada kaki, melancarkan metabolisme, dan meringankan rasa lelah setelah perjalanan jauh.',
     image_url: './assets/gallery/rf-01.png',
-    is_featured: true,
-    sort_order: 4
+    sort_order: 40,
+    available_outlets: []
   },
   {
     id: '5',
-    service_code: 'ZEN-REF-02',
-    name: 'Pure Foot Reflexology 60\'',
-    category: 'Reflexology',
-    duration_minutes: 60,
-    price: 185000,
-    description: 'Stimulasi mendalam pada zona refleks kaki yang terhubung langsung ke organ vital tubuh menggunakan krim aromatik beraroma peppermint.',
-    benefits: 'Melancarkan peredaran darah perifer dan meringankan keluhan kaki bengkak/pegal.',
-    image_url: './assets/gallery/rf-02.png',
-    is_featured: false,
-    sort_order: 5
+    service_code: 'SRV-REFLEX-MERIDIAN',
+    name: 'Comprehensive Meridian Foot & Calf',
+    category: 'Foot Reflexology',
+    duration_minutes: 90,
+    description: 'Refleksi mendalam yang mencakup telapak kaki, betis, hingga lutut dengan rendaman air hangat herbal.',
+    benefits: 'Meredakan pembengkakan kaki, merilekskan otot betis, dan meredakan ketegangan sendi.',
+    image_url: './assets/gallery/bm-01.png',
+    sort_order: 50,
+    available_outlets: []
   },
   {
     id: '6',
-    service_code: 'ZEN-SCB-01',
-    name: 'Javanese Lulur & Milk Body Polish',
-    category: 'Body Glow & Scrub',
-    duration_minutes: 90,
-    price: 295000,
-    description: 'Tradisi lulur keraton berbahan kunyit, temugiring, dan tepung beras untuk mengangkat sel kulit mati, dilanjutkan masker susu murni dan shower air hangat.',
-    benefits: 'Mencerahkan kulit kusam, melembutkan tekstur kulit, dan meregenerasi sel kulit baru.',
+    service_code: 'SRV-ADD-BODY-SCRUB',
+    name: 'Lulur Herbal & Body Glow Scrub',
+    category: 'Addition',
+    duration_minutes: 45,
+    description: 'Eksfoliasi kulit menggunakan lulur rempah beras dan kunyit tradisional untuk mengangkat sel kulit mati.',
+    benefits: 'Menghaluskan tekstur kulit, mencerahkan warna kulit kusam, dan menyegarkan pori-pori.',
     image_url: './assets/gallery/prod-01.png',
-    is_featured: true,
-    sort_order: 6
+    sort_order: 60,
+    available_outlets: []
   }
 ];
 
@@ -246,14 +240,36 @@ export async function fetchPublicOutlets(): Promise<Outlet[]> {
 }
 
 /**
- * Fetch public treatment services from Supabase.
- * Queries active services ordered by sort_order.
+ * Fetch public treatment services from Supabase (web_services joined with web_outlet_services).
+ * Queries active services ordered by sort_order without prices.
  */
 export async function fetchPublicServices(): Promise<Service[]> {
   try {
     const { data, error } = await supabase
-      .from('master_services')
-      .select('id, service_code, name, category, duration_minutes, price, description, benefits, image_url, is_featured, sort_order')
+      .from('web_services')
+      .select(`
+        id,
+        service_code,
+        name,
+        category,
+        duration_minutes,
+        description,
+        benefits,
+        image_url,
+        active,
+        sort_order,
+        web_outlet_services (
+          kode_outlet,
+          is_available,
+          custom_notes,
+          master_outlet (
+            kode_outlet,
+            name_outlet,
+            city,
+            no_wa
+          )
+        )
+      `)
       .eq('active', true)
       .order('sort_order', { ascending: true });
 
@@ -263,7 +279,30 @@ export async function fetchPublicServices(): Promise<Service[]> {
     }
 
     if (data && data.length > 0) {
-      return data as Service[];
+      return data.map((item: any) => {
+        const available_outlets: ServiceOutletAvailability[] = (item.web_outlet_services || [])
+          .filter((wos: any) => wos.is_available && wos.master_outlet)
+          .map((wos: any) => ({
+            kode_outlet: wos.kode_outlet,
+            name_outlet: wos.master_outlet.name_outlet,
+            city: wos.master_outlet.city,
+            no_wa: wos.master_outlet.no_wa,
+            custom_notes: wos.custom_notes
+          }));
+
+        return {
+          id: item.id,
+          service_code: item.service_code,
+          name: item.name,
+          category: item.category,
+          duration_minutes: item.duration_minutes,
+          description: item.description,
+          benefits: item.benefits,
+          image_url: item.image_url,
+          sort_order: item.sort_order,
+          available_outlets
+        };
+      }) as Service[];
     }
   } catch (err) {
     console.warn('Network issue fetching services, using fallback:', err);

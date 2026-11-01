@@ -11,7 +11,7 @@ import { HeroSection } from './components/HeroSection';
 import { PhilosophySection } from './components/PhilosophySection';
 import { ServicesSection } from './components/ServicesSection';
 import { OutletsSection } from './components/OutletsSection';
-import { ReservationSection } from './components/ReservationSection';
+// import { ReservationSection } from './components/ReservationSection';
 import { GallerySection } from './components/GallerySection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { Footer } from './components/Footer';
@@ -24,10 +24,6 @@ export function App() {
   const [outletFacilities, setOutletFacilities] = useState<OutletFacility[]>([]);
   const [isLoadingOutlets, setIsLoadingOutlets] = useState<boolean>(true);
   const [isLoadingServices, setIsLoadingServices] = useState<boolean>(true);
-
-  // Selected state for form pre-population
-  const [preselectedOutlet, setPreselectedOutlet] = useState<string | undefined>(undefined);
-  const [preselectedService, setPreselectedService] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     async function loadData() {
@@ -53,32 +49,22 @@ export function App() {
     loadData();
   }, []);
 
-  const scrollToReservation = () => {
-    const el = document.getElementById('reservasi');
+  const scrollToOutlets = () => {
+    const el = document.getElementById('outlet');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const handleSelectService = (serviceName: string) => {
-    setPreselectedService(serviceName);
-    scrollToReservation();
-  };
-
-  const handleSelectOutlet = (kodeOutlet: string) => {
-    setPreselectedOutlet(kodeOutlet);
-    scrollToReservation();
-  };
-
   return (
     <div className="min-h-screen bg-[#F8F5F1] text-[#3C3C32] font-sans flex flex-col selection:bg-[#889D35] selection:text-white">
       {/* Navigation with dynamic Holding Contact (Kode 111) */}
-      <Navbar onBookClick={scrollToReservation} holdingContact={holdingContact} />
+      <Navbar onBookClick={scrollToOutlets} holdingContact={holdingContact} />
 
       {/* Main Content Sections */}
       <main className="flex-1">
         {/* 1. Hero Section */}
-        <HeroSection onBookClick={scrollToReservation} />
+        <HeroSection onBookClick={scrollToOutlets} />
 
         {/* 2. Philosophy & Heritage Section */}
         <PhilosophySection />
@@ -87,7 +73,6 @@ export function App() {
         <ServicesSection
           services={services}
           isLoading={isLoadingServices}
-          onSelectService={handleSelectService}
         />
 
         {/* 4. Outlets Directory & Locator with "Lihat Fasilitas" Modal */}
@@ -95,16 +80,16 @@ export function App() {
           outlets={outlets}
           outletFacilities={outletFacilities}
           isLoading={isLoadingOutlets}
-          onSelectOutlet={handleSelectOutlet}
+          onSelectOutlet={scrollToOutlets}
         />
 
-        {/* 5. Online Reservation Form */}
-        <ReservationSection
+        {/* 5. Online Reservation Form (Temporarily hidden per client request) */}
+        {/* <ReservationSection
           outlets={outlets}
           services={services}
           preselectedOutlet={preselectedOutlet}
           preselectedService={preselectedService}
-        />
+        /> */}
 
         {/* 6. Gallery Section */}
         <GallerySection />

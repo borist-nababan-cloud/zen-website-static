@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import type { Outlet } from '../types';
-import { Calendar, Menu, X, Phone, Clock, MapPin, Sparkles } from 'lucide-react';
+import { Menu, X, Phone, Clock, MapPin } from 'lucide-react';
 
 interface NavbarProps {
-  onBookClick: () => void;
+  onBookClick?: () => void;
   holdingContact?: Outlet | null;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onBookClick, holdingContact }) => {
+export const Navbar: React.FC<NavbarProps> = ({ holdingContact }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -105,28 +105,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onBookClick, holdingContact }) =
           <div className="hidden sm:flex items-center gap-3">
             <a
               href="#outlet"
-              className="text-xs uppercase tracking-wider font-semibold px-4 py-2 text-[#3C3C32] hover:text-[#889D35] transition"
-            >
-              Cari Cabang
-            </a>
-            <button
-              onClick={onBookClick}
               className="bg-[#889D35] hover:bg-[#6E8027] text-white text-xs uppercase tracking-widest font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow transition flex items-center gap-2 transform active:scale-95"
             >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Reservasi</span>
-            </button>
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Cari Cabang</span>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={onBookClick}
-              className="bg-[#889D35] text-white text-[11px] font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Reservasi</span>
-            </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 text-[#3C3C32] hover:text-[#889D35] focus:outline-none"
@@ -154,20 +141,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onBookClick, holdingContact }) =
               <a
                 href="#outlet"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-center text-sm font-medium text-[#717163] py-2"
-              >
-                Cari Lokasi Cabang Terdekat
-              </a>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onBookClick();
-                }}
                 className="w-full bg-[#889D35] text-white text-sm font-medium py-3 rounded-full flex items-center justify-center gap-2 shadow"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Buat Reservasi Online</span>
-              </button>
+                <MapPin className="w-4 h-4" />
+                <span>Cari Lokasi Cabang Terdekat</span>
+              </a>
             </div>
           </div>
         )}

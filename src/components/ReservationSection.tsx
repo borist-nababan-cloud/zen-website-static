@@ -263,7 +263,7 @@ export const ReservationSection: React.FC<ReservationSectionProps> = ({
                   >
                     {services.map((service) => (
                       <option key={service.id || service.service_code} value={service.name}>
-                        {service.name} ({service.duration_minutes} Min - Rp {service.price.toLocaleString('id-ID')})
+                        {service.name} ({service.duration_minutes} Min{service.price ? ` - Rp ${service.price.toLocaleString('id-ID')}` : ''})
                       </option>
                     ))}
                   </select>
