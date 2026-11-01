@@ -4,7 +4,7 @@ import { fetchPublicGalleries, fallbackGalleries } from '../lib/supabaseClient';
 import { Camera, Sparkles, Loader2 } from 'lucide-react';
 
 export const GallerySection: React.FC = () => {
-  const [galleries, setGalleries] = useState<WebGalleryItem[]>(fallbackGalleries);
+  const [galleries, setGalleries] = useState<WebGalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -13,13 +13,14 @@ export const GallerySection: React.FC = () => {
       try {
         const data = await fetchPublicGalleries();
         if (isMounted) {
-          if (data && data.length > 0) {
-            setGalleries(data);
-          }
+          setGalleries(data);
           setIsLoading(false);
         }
       } catch {
-        if (isMounted) setIsLoading(false);
+        if (isMounted) {
+          setGalleries(fallbackGalleries);
+          setIsLoading(false);
+        }
       }
     }
     loadGallery();

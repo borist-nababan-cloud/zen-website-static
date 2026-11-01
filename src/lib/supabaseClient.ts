@@ -431,11 +431,12 @@ export async function fetchPublicGalleries(): Promise<WebGalleryItem[]> {
       return fallbackGalleries;
     }
 
-    if (data && data.length > 0) {
+    if (data) {
       return data as WebGalleryItem[];
     }
   } catch (err) {
     console.warn('Network issue fetching web_galleries:', err);
+    return fallbackGalleries;
   }
-  return fallbackGalleries;
+  return [];
 }
