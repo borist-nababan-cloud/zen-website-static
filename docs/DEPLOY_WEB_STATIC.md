@@ -223,3 +223,4 @@ Sebelum mengumumkan website ke publik, jalankan checklist berikut:
   Buka WHM App di menu **Web Data ➔ User Testimoni**, pastikan ulasan yang baru dikirim muncul dengan status *Menunggu Moderasi*, klik toggle untuk menerbitkan, dan verifikasi ulasan langsung tampil di website statis.
 - [ ] **Hotline WhatsApp**:
   Klik tombol floating WhatsApp di kanan bawah, pastikan langsung terhubung ke nomor holding kantor pusat (`0812-2000-168` / `0823-6786-7000`).
+
