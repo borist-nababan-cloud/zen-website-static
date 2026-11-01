@@ -20,13 +20,12 @@ The website connects directly to Supabase Cloud using the client publishable/ano
    - **Strict Data Minimization**: Selects only public-safe fields:
      `kode_outlet, name_outlet, alamat, city, province, no_telp, no_wa, email, location`.
    - Internal credentials, audit IDs, and operational keys are completely omitted from the query.
-2. **Dynamic Treatment Menu (`master_services`)**:
-   - Fetches active services ordered by `sort_order`.
-   - Retrieves duration, pricing, categories (Signature Body Massage, Reflexology, Body Glow & Scrub, Hot Stone Therapy), and holistic benefits.
-3. **Reservation & Lead Capture (`crm_leads`)**:
-   - Direct client submission with RLS policy `Allow public insert crm_leads`.
-   - Automatically stores customer name, phone number, chosen outlet, treatment name, visit date, visit time, guest count, special notes, and attribution source (`source = 'WEBSITE'`).
-   - Includes instant WhatsApp confirmation bridge to the selected branch.
+2. **Dynamic Treatment Menu (`web_services` & `web_outlet_services`)**:
+   - Fetches active services ordered by `sort_order` strictly under 3 categories: `Body Massage`, `Foot Reflexology`, `Addition`.
+   - **Zero-Price Standard**: In accordance with executive policy, prices are omitted from the public static site and branch settings to eliminate customer misperceptions due to city-by-city rate variations across Zen's 10 branches.
+   - **Multi-Branch Availability Accordion**: Each service card features an expandable list showing all active branches that offer the treatment, along with branch-specific notes and a direct WhatsApp inquiry button (`Tanya Tarif`).
+3. **Reservation Section Status**:
+   - Temporarily hidden from the static website view per management directive. "Reservasi" buttons in Header and Hero sections have been replaced with direct branch discovery actions ("Cari Cabang" / "Eksplorasi Perawatan").
 
 ---
 
