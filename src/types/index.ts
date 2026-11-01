@@ -62,3 +62,14 @@ export interface ReservationFormData {
   guest_count: number;
   notes?: string;
 }
+
+export interface WebGalleryItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  image_url: string;
+  kode_outlet?: string | null;
+  active: boolean;
+  sort_order: number;
+}

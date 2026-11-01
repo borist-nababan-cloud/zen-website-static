@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Outlet, Service, OutletFacility, ReservationFormData } from '../types';
+import type { Outlet, Service, OutletFacility, ReservationFormData, WebGalleryItem } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ihdlwogvjfgawgsalgng.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_KobV2o95Ymfem77b4zVBJg_E_onldRD';
@@ -353,4 +353,89 @@ export async function submitReservationLead(lead: ReservationFormData): Promise<
   } catch (err: any) {
     return { success: false, error: err?.message || 'Terjadi gangguan koneksi saat mengirim reservasi.' };
   }
+}
+
+/**
+ * Fallback Galleries for resilient rendering if Supabase connection drops.
+ */
+export const fallbackGalleries: WebGalleryItem[] = [
+  {
+    id: 'g-1',
+    title: 'Ruang Perawatan Privat',
+    description: 'Pencahayaan temaram dan aromaterapi serai yang menenangkan batin.',
+    category: 'Suasana & Interior',
+    image_url: './assets/gallery/carousel(1).jpg',
+    active: true,
+    sort_order: 10
+  },
+  {
+    id: 'g-2',
+    title: 'Batu Basal Vulkanis Alami',
+    description: 'Menyalurkan kehangatan mendalam pada titik meridian tubuh.',
+    category: 'Perawatan & Spa',
+    image_url: './assets/gallery/hot-stone.png',
+    active: true,
+    sort_order: 20
+  },
+  {
+    id: 'g-3',
+    title: 'Suasana Tenang & Bersih',
+    description: 'Higienitas berstandar tinggi dengan linen steril sekali pakai.',
+    category: 'Suasana & Interior',
+    image_url: './assets/gallery/carousel(3).jpg',
+    active: true,
+    sort_order: 30
+  },
+  {
+    id: 'g-4',
+    title: 'Lounge Refleksi Ergonomis',
+    description: 'Kursi malas mewah berposisi nol gravitasi untuk relaksasi kaki optimal.',
+    category: 'Refleksi',
+    image_url: './assets/gallery/rf-01.png',
+    active: true,
+    sort_order: 40
+  },
+  {
+    id: 'g-5',
+    title: 'Minyak Esensial Nusantara',
+    description: 'Ekstrak bunga dan rempah segar asli Indonesia.',
+    category: 'Bahan Alami',
+    image_url: './assets/gallery/carousel(2).jpg',
+    active: true,
+    sort_order: 50
+  },
+  {
+    id: 'g-6',
+    title: 'Perawatan Lulur Tradisional',
+    description: 'Eksfoliasi lembut untuk mencerahkan dan menghaluskan kulit.',
+    category: 'Perawatan & Spa',
+    image_url: './assets/gallery/prod-01.png',
+    active: true,
+    sort_order: 60
+  }
+];
+
+/**
+ * Fetch active gallery items from public.web_galleries strictly where active = true.
+ */
+export async function fetchPublicGalleries(): Promise<WebGalleryItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('web_galleries')
+      .select('id, title, description, category, image_url, kode_outlet, active, sort_order')
+      .eq('active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) {
+      console.warn('Supabase fetchPublicGalleries notice:', error.message);
+      return fallbackGalleries;
+    }
+
+    if (data && data.length > 0) {
+      return data as WebGalleryItem[];
+    }
+  } catch (err) {
+    console.warn('Network issue fetching web_galleries:', err);
+  }
+  return fallbackGalleries;
 }
