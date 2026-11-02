@@ -1,13 +1,16 @@
 import React from 'react';
-import { ChevronDown, Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
+import { useLanguage } from '../lib/i18n';
+import { Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
 
 interface HeroSectionProps {
   onBookClick?: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = () => {
+  const { language, t } = useLanguage();
+
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#25251F]">
+    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#25251F] font-sans">
       {/* Background Image with Slow Subtle Ambient Overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -15,7 +18,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
           alt="Suasana Tenang Zen Family Spa"
           className="w-full h-full object-cover object-center scale-105 transition-transform duration-10000 ease-out"
         />
-        {/* Multilayer Soft Gradient Overlay to ensure text readability while maintaining warm photo tone */}
+        {/* Multilayer Soft Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#25251F]/85 via-[#25251F]/70 to-[#25251F]/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#25251F] via-transparent to-[#25251F]/40" />
       </div>
@@ -25,7 +28,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
         {/* Subtle Top Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#889D35]/25 border border-[#889D35]/40 text-[#D2C0A7] text-xs uppercase tracking-widest font-semibold mb-6 animate-fadeIn">
           <Sparkles className="w-3.5 h-3.5 text-[#889D35]" />
-          <span>Embodying Mindful Wellness</span>
+          <span>{t.hero.badge}</span>
         </div>
 
         {/* Main Headline */}
@@ -38,8 +41,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
 
         {/* Tagline / Subtitle */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[#E5DACB]/90 font-light leading-relaxed mb-10">
-          Mengharmonisasikan raga, pikiran, dan jiwa melalui perpaduan warisan pijat tradisional Nusantara,
-          refleksi meridian modern, dan aromaterapi herbal alami pilihan.
+          {t.hero.subtitle}
         </p>
 
         {/* Action Buttons */}
@@ -49,13 +51,13 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
             className="w-full sm:w-auto bg-[#889D35] hover:bg-[#6E8027] text-white px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 transform hover:-translate-y-0.5 text-center cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Eksplorasi Perawatan</span>
+            <span>{t.hero.ctaServices}</span>
           </a>
           <a
             href="#outlet"
-            className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#F8F5F1] border border-[#D2C0A7]/40 px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold backdrop-blur-sm transition-all duration-300 text-center"
+            className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#F8F5F1] border border-[#D2C0A7]/40 px-8 py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest font-semibold backdrop-blur-sm transition-all duration-300 text-center cursor-pointer"
           >
-            Temukan Cabang
+            {t.hero.ctaOutlets}
           </a>
         </div>
 
@@ -66,8 +68,8 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
               <ShieldCheck className="w-5 h-5 text-[#889D35]" />
             </div>
             <div>
-              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">10+ Cabang Resmi</p>
-              <p className="text-[11px] text-[#D2C0A7]/80">Bandung, Jakarta, Bali & Kota Lain</p>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustOutlets}</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">Bandung, Jakarta, Bali & Others</p>
             </div>
           </div>
 
@@ -76,8 +78,8 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
               <Award className="w-5 h-5 text-[#889D35]" />
             </div>
             <div>
-              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">100% Bersertifikasi</p>
-              <p className="text-[11px] text-[#D2C0A7]/80">Terapis Terlatih Profesional</p>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustTherapists}</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">{language === 'en' ? 'Professional Masters' : 'Terapis Terlatih Profesional'}</p>
             </div>
           </div>
 
@@ -86,8 +88,8 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
               <Heart className="w-5 h-5 text-[#889D35]" />
             </div>
             <div>
-              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">Minyak Esensial Murni</p>
-              <p className="text-[11px] text-[#D2C0A7]/80">Aromaterapi Organik Alami</p>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustOils}</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">{language === 'en' ? '100% Pure Botanical' : 'Aromaterapi Organik Alami'}</p>
             </div>
           </div>
 
@@ -96,23 +98,12 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
               <Sparkles className="w-5 h-5 text-[#889D35]" />
             </div>
             <div>
-              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">Ruang Privat Hening</p>
-              <p className="text-[11px] text-[#D2C0A7]/80">Higienis, Tenang & Elegan</p>
+              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustSuites}</p>
+              <p className="text-[11px] text-[#D2C0A7]/80">{language === 'en' ? 'Serene & Clean Sanctuary' : 'Higienis, Tenang & Elegan'}</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Floating Scroll Indicator */}
-      <a
-        href="#filosofi"
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-[#D2C0A7] hover:text-white transition flex flex-col items-center gap-1 opacity-70 hover:opacity-100"
-        aria-label="Scroll ke konten"
-      >
-        <span className="text-[10px] uppercase tracking-widest">Gulir</span>
-        <ChevronDown className="w-4 h-4 animate-bounce" />
-      </a>
     </section>
   );
 };
-

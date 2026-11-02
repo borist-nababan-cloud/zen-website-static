@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Outlet, OutletFacility } from '../types';
+import { useLanguage } from '../lib/i18n';
 import {
-  MapPin,
   Phone,
   MessageSquare,
   Clock,
@@ -32,16 +32,17 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
   outletFacilities = [],
   isLoading,
 }) => {
+  const { language, t, getLocalizedText } = useLanguage();
   const [selectedCity, setSelectedCity] = useState<string>('ALL');
   const [selectedOutletForModal, setSelectedOutletForModal] = useState<Outlet | null>(null);
 
   // Extract unique cities
-  const cities = ['ALL', ...Array.from(new Set(outlets.map((o) => o.city || 'Lainnya')))];
+  const cities = ['ALL', ...Array.from(new Set(outlets.map((o) => o.city || (language === 'en' ? 'Others' : 'Lainnya'))))];
 
   const filteredOutlets =
     selectedCity === 'ALL'
       ? outlets
-      : outlets.filter((o) => (o.city || 'Lainnya') === selectedCity);
+      : outlets.filter((o) => (o.city || (language === 'en' ? 'Others' : 'Lainnya')) === selectedCity);
 
   // Helper to render matching Lucide icon
   const renderFacilityIcon = (iconName?: string | null) => {
@@ -75,21 +76,20 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
     : [];
 
   return (
-    <section id="outlet" className="py-24 sm:py-32 bg-[#F8F5F1] relative">
+    <section id="outlet" className="py-24 sm:py-32 bg-[#F8F5F1] relative font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <p className="text-xs uppercase tracking-widest text-[#889D35] font-semibold mb-3">
-            Jaringan Cabang Resmi
+            {t.outlets.badge}
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#3C3C32] font-normal leading-tight mb-4">
-            Temukan Cabang Zen Terdekat
+            {t.outlets.title}
           </h2>
           <div className="w-16 h-[2px] bg-[#889D35] mx-auto mb-5" />
           <p className="text-sm sm:text-base text-[#717163] leading-relaxed">
-            Hadir di 10+ lokasi strategis di berbagai kota besar Indonesia, setiap cabang Zen Family Spa
-            memberikan kenyamanan fasilitas VIP, ruang refleksi eksklusif, dan parkir luas.
+            {t.outlets.subtitle}
           </p>
         </div>
 
@@ -97,17 +97,18 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
         <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
           {cities.map((city) => {
             const isAll = city === 'ALL';
-            const label = isAll ? 'Semua Kota' : city;
+            const label = isAll ? t.outlets.filterAll : city;
             const active = selectedCity === city;
 
             return (
               <button
                 key={city}
                 onClick={() => setSelectedCity(city)}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all ${active
-                    ? 'bg-[#3C3C32] text-[#D2C0A7] shadow-md'
-                    : 'bg-white text-[#717163] hover:text-[#3C3C32] border border-[#E5DACB]'
-                  }`}
+                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all duration-300 cursor-pointer ${
+                  active
+                    ? 'bg-[#889D35] text-white shadow-md'
+                    : 'bg-white text-[#717163] hover:text-[#3C3C32] hover:bg-[#F4EFEB] border border-[#E5DACB]'
+                }`}
               >
                 {label}
               </button>
@@ -115,14 +116,15 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
           })}
         </div>
 
-        {/* Loading State */}
+        {/* Loading State Skeleton */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((idx) => (
-              <div key={idx} className="bg-white p-6 rounded-2xl border border-[#E5DACB] animate-pulse space-y-4">
-                <div className="h-6 bg-gray-200 rounded w-1/2" />
-                <div className="h-12 bg-gray-200 rounded" />
-                <div className="h-8 bg-gray-200 rounded w-2/3" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((idx) => (
+              <div key={idx} className="bg-white rounded-2xl p-6 border border-[#E5DACB] space-y-4 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-2/3" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+                <div className="h-16 bg-gray-200 rounded" />
+                <div className="h-10 bg-gray-200 rounded-full" />
               </div>
             ))}
           </div>
@@ -130,93 +132,89 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
           /* Outlets Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredOutlets.map((outlet) => {
-              const waNumber = outlet.no_wa || '08122000168';
-              const cleanWa = waNumber.replace(/[^0-9]/g, '').replace(/^0/, '62');
-              const waLink = `https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(
-                outlet.name_outlet
-              )},%20saya%20ingin%20reservasi%20perawatan%20spa`;
-              const mapsQuery = encodeURIComponent(
-                `${outlet.name_outlet} ${outlet.alamat || ''} ${outlet.city || ''}`
-              );
-              const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+              const displayTelp = outlet.no_telp || '022-2003788';
+              const displayWa = outlet.no_wa || '0812-2000-0168';
+
+              let mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                `${outlet.name_outlet} ${outlet.alamat || ''}`
+              )}`;
+
+              if (outlet.location) {
+                if (typeof outlet.location === 'object' && outlet.location.maps_url) {
+                  mapsUrl = outlet.location.maps_url;
+                } else if (typeof outlet.location === 'string') {
+                  try {
+                    const parsed = JSON.parse(outlet.location);
+                    if (parsed.maps_url) mapsUrl = parsed.maps_url;
+                  } catch (e) {}
+                }
+              }
 
               return (
                 <div
                   key={outlet.kode_outlet}
-                  className="bg-white rounded-2xl p-7 border border-[#E5DACB] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                  className="bg-white rounded-2xl p-7 border border-[#E5DACB] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:border-[#889D35]/50"
                 >
                   <div>
-                    {/* Header: Outlet Code Badge & Name */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="text-[11px] font-bold tracking-widest text-[#889D35] bg-[#889D35]/10 px-2.5 py-1 rounded-md">
-                        CABANG {outlet.kode_outlet}
+                    {/* Header: Outlet Code & City */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[11px] font-bold tracking-widest text-[#889D35] uppercase bg-[#889D35]/10 px-3 py-1 rounded-full">
+                        {outlet.kode_outlet} • {outlet.city || (language === 'en' ? 'Indonesia' : 'Indonesia')}
                       </span>
-                      <span className="text-xs font-medium text-[#717163] flex items-center gap-1">
-                        <CheckCircle className="w-3.5 h-3.5 text-[#889D35]" /> Buka Hari Ini
+                      <span className="flex items-center gap-1 text-[11px] text-[#717163]">
+                        <CheckCircle className="w-3.5 h-3.5 text-[#889D35]" />
+                        <span>{language === 'en' ? 'Official' : 'Resmi'}</span>
                       </span>
                     </div>
 
-                    <h3 className="font-serif text-2xl font-bold text-[#3C3C32] mb-3">
+                    {/* Outlet Name */}
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#3C3C32] mb-3 group-hover:text-[#889D35] transition">
                       {outlet.name_outlet}
                     </h3>
 
                     {/* Address */}
-                    <div className="flex items-start gap-3 text-xs sm:text-sm text-[#717163] mb-4">
-                      <MapPin className="w-4 h-4 text-[#889D35] shrink-0 mt-0.5" />
-                      <p className="leading-relaxed">
-                        {outlet.alamat || 'Alamat cabang resmi Zen Family Spa & Reflexology'}
-                        {outlet.city && <span className="block font-medium text-[#3C3C32] mt-0.5">{outlet.city}, {outlet.province || ''}</span>}
-                      </p>
-                    </div>
+                    <p className="text-xs sm:text-sm text-[#717163] leading-relaxed mb-5 min-h-[40px]">
+                      {outlet.alamat || (language === 'en' ? 'Official branch address of Zen Family Spa & Reflexology' : 'Alamat resmi cabang Zen Family Spa & Reflexology')}
+                    </p>
 
-                    {/* Operating Hours */}
-                    <div className="flex items-center gap-3 text-xs text-[#717163] mb-4 bg-[#F8F5F1] p-3 rounded-xl border border-[#E5DACB]/50">
-                      <Clock className="w-4 h-4 text-[#889D35] shrink-0" />
-                      <span>Setiap Hari: 10:00 - 22:00 WIB/WITA</span>
-                    </div>
-
-                    {/* Telephone */}
-                    {outlet.no_telp && (
-                      <div className="flex items-center gap-3 text-xs text-[#717163] mb-6">
-                        <Phone className="w-4 h-4 text-[#889D35] shrink-0" />
-                        <a href={`tel:${outlet.no_telp}`} className="hover:text-[#889D35] transition">
-                          {outlet.no_telp}
-                        </a>
+                    {/* Operating Details */}
+                    <div className="space-y-2.5 pt-4 border-t border-[#E5DACB]/60 text-xs text-[#3C3C32] mb-6">
+                      <div className="flex items-center gap-2.5">
+                        <Clock className="w-4 h-4 text-[#889D35] shrink-0" />
+                        <span>{t.outlets.operatingHours}</span>
                       </div>
-                    )}
+                      <div className="flex items-center gap-2.5">
+                        <Phone className="w-4 h-4 text-[#889D35] shrink-0" />
+                        <span>Telp: {displayTelp}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <MessageSquare className="w-4 h-4 text-[#889D35] shrink-0" />
+                        <span>WhatsApp: {displayWa}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="space-y-2.5 pt-4 border-t border-[#E5DACB]/60">
-                    <div className="grid grid-cols-2 gap-2">
-                      <a
-                        href={waLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#25D366]/10 hover:bg-[#25D366] text-[#128C7E] hover:text-white border border-[#25D366]/30 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-center"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>WhatsApp</span>
-                      </a>
-
-                      <a
-                        href={mapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#F8F5F1] hover:bg-[#3C3C32] text-[#3C3C32] hover:text-white border border-[#D2C0A7] py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-center"
-                      >
-                        <Navigation className="w-3.5 h-3.5" />
-                        <span>Petunjuk Arah</span>
-                      </a>
-                    </div>
-
-                    {/* Button "Lihat Fasilitas" */}
-                    <button
-                      onClick={() => setSelectedOutletForModal(outlet)}
-                      className="w-full bg-[#889D35] hover:bg-[#6E8027] text-white py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider font-semibold transition shadow-sm hover:shadow flex items-center justify-center gap-1.5"
+                  {/* Actions Bar */}
+                  <div className="space-y-2.5 pt-2">
+                    {/* Direction Maps Link */}
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-[#F8F5F1] hover:bg-[#EAE4DC] text-[#3C3C32] py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider font-semibold transition flex items-center justify-center gap-2 border border-[#D2C0A7]"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Lihat Fasilitas Cabang</span>
+                      <Navigation className="w-3.5 h-3.5 text-[#889D35]" />
+                      <span>{t.outlets.getDirections}</span>
+                    </a>
+
+                    {/* View Facilities Button */}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOutletForModal(outlet)}
+                      className="w-full bg-white hover:bg-[#889D35] text-[#889D35] hover:text-white py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider font-semibold transition flex items-center justify-center gap-2 border border-[#889D35] shadow-xs cursor-pointer group/fac"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 group-hover/fac:rotate-12 transition-transform" />
+                      <span>{t.outlets.viewFacilities}</span>
                     </button>
                   </div>
                 </div>
@@ -225,16 +223,16 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
           </div>
         )}
 
-        {/* Modal Dialog: Detail Fasilitas Cabang */}
+        {/* Modal: View Facilities for Outlet */}
         {selectedOutletForModal && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-[#E5DACB] animate-fadeIn max-h-[90vh] overflow-y-auto relative">
-
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+            <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 border border-[#D2C0A7] shadow-2xl relative">
+              
               {/* Close Button */}
               <button
                 onClick={() => setSelectedOutletForModal(null)}
-                className="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition"
-                aria-label="Tutup Modal"
+                className="absolute top-6 right-6 p-2 rounded-full bg-[#F8F5F1] text-[#717163] hover:text-[#3C3C32] transition cursor-pointer"
+                aria-label={t.outlets.close}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -242,10 +240,10 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
               {/* Modal Header */}
               <div className="mb-6 pr-8">
                 <span className="text-[11px] font-bold tracking-widest text-[#889D35] uppercase bg-[#889D35]/10 px-3 py-1 rounded-full inline-block mb-2">
-                  Cabang {selectedOutletForModal.kode_outlet} • {selectedOutletForModal.city || 'Indonesia'}
+                  {language === 'en' ? 'Branch' : 'Cabang'} {selectedOutletForModal.kode_outlet} • {selectedOutletForModal.city || 'Indonesia'}
                 </span>
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#3C3C32]">
-                  Fasilitas {selectedOutletForModal.name_outlet}
+                  {t.outlets.facilitiesTitle} {selectedOutletForModal.name_outlet}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#717163] mt-1">
                   {selectedOutletForModal.alamat || 'Alamat cabang resmi Zen Family Spa & Reflexology'}
@@ -260,6 +258,10 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
                     const img1 = of.custom_image_url_1 || fac.image_url_1;
                     const img2 = of.custom_image_url_2 || fac.image_url_2;
 
+                    const facName = getLocalizedText(fac.name, fac.name_en);
+                    const facDesc = getLocalizedText(fac.description, fac.description_en);
+                    const facCat = getLocalizedText(fac.category, fac.category_en);
+
                     return (
                       <div
                         key={of.id}
@@ -270,7 +272,7 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
                           {img1 ? (
                             <img
                               src={img1}
-                              alt={fac.name}
+                              alt={facName}
                               className="w-1/2 sm:w-full h-24 object-cover rounded-xl border border-white shadow-sm"
                             />
                           ) : (
@@ -282,7 +284,7 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
                           {img2 ? (
                             <img
                               src={img2}
-                              alt={`${fac.name} 2`}
+                              alt={`${facName} 2`}
                               className="w-1/2 sm:w-full h-24 object-cover rounded-xl border border-white shadow-sm"
                             />
                           ) : null}
@@ -296,21 +298,23 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
                             </div>
                             <div>
                               <h4 className="font-serif font-bold text-base text-[#3C3C32]">
-                                {fac.name}
+                                {facName}
                               </h4>
                               <span className="text-[10px] text-[#889D35] font-semibold uppercase tracking-wider block">
-                                {fac.category}
+                                {facCat}
                               </span>
                             </div>
                           </div>
 
                           <p className="text-xs text-[#717163] leading-relaxed pt-1">
-                            {fac.description}
+                            {facDesc}
                           </p>
 
                           {of.custom_notes && (
                             <div className="mt-2 p-2.5 rounded-lg bg-white border border-[#E5DACB]/80 text-xs text-[#3C3C32]">
-                              <span className="font-semibold text-[#889D35] mr-1">Khusus Cabang Ini:</span>
+                              <span className="font-semibold text-[#889D35] mr-1">
+                                {language === 'en' ? 'Special for this branch:' : 'Khusus Cabang Ini:'}
+                              </span>
                               {of.custom_notes}
                             </div>
                           )}
@@ -321,9 +325,13 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
                 ) : (
                   <div className="text-center py-8 text-gray-500 space-y-2">
                     <Sparkles className="w-8 h-8 text-[#889D35] mx-auto opacity-50" />
-                    <p className="text-sm">Cabang ini menyediakan fasilitas standar kenyamanan Zen:</p>
+                    <p className="text-sm font-medium">
+                      {language === 'en'
+                        ? 'This branch features standard Zen luxury amenities:'
+                        : 'Cabang ini menyediakan fasilitas standar kenyamanan Zen:'}
+                    </p>
                     <p className="text-xs text-gray-400">
-                      Couple VIP Suite Room, Hot Water Rain Shower, Serene Zen Lounge, dan Free Flow Wedang Jahe Merah Hangat.
+                      Couple VIP Suite Room, Hot Water Rain Shower, Serene Zen Lounge, & Complimentary Hot Ginger Tea.
                     </p>
                   </div>
                 )}
@@ -333,9 +341,9 @@ export const OutletsSection: React.FC<OutletsSectionProps> = ({
               <div className="mt-6 pt-4 border-t border-[#E5DACB] flex justify-end">
                 <button
                   onClick={() => setSelectedOutletForModal(null)}
-                  className="bg-[#3C3C32] hover:bg-black text-[#D2C0A7] px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition"
+                  className="bg-[#3C3C32] hover:bg-black text-[#D2C0A7] px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition cursor-pointer"
                 >
-                  Tutup
+                  {t.outlets.close}
                 </button>
               </div>
 

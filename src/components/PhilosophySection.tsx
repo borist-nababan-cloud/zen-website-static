@@ -1,24 +1,25 @@
 import React from 'react';
+import { useLanguage } from '../lib/i18n';
 import { Feather, Sparkles, Compass, CheckCircle2 } from 'lucide-react';
 
 export const PhilosophySection: React.FC = () => {
+  const { language, t } = useLanguage();
+
   return (
-    <section id="filosofi" className="py-24 sm:py-32 bg-[#F8F5F1] relative">
+    <section id="filosofi" className="py-24 sm:py-32 bg-[#F8F5F1] relative font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <p className="text-xs uppercase tracking-widest text-[#889D35] font-semibold mb-3">
-            Filosofi & Nilai Zen
+            {t.philosophy.badge}
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#3C3C32] font-normal leading-tight mb-6">
-            Ketenangan di Tengah <br />
-            <span className="italic font-light text-[#6E8027]">Kehidupan Modern</span>
+            {t.philosophy.title}
           </h2>
           <div className="w-16 h-[2px] bg-[#889D35] mx-auto mb-6" />
           <p className="text-sm sm:text-base text-[#717163] leading-relaxed">
-            Terinspirasi dari harmoni alam dan kearifan tradisional Nusantara, Zen Family Spa menghadirkan
-            tempat perlindungan batin untuk memulihkan energi, melepaskan lelah, dan memperbarui vitalitas tubuh Anda.
+            {t.philosophy.subtitle}
           </p>
         </div>
 
@@ -36,10 +37,12 @@ export const PhilosophySection: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-[#25251F]/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <p className="text-xs uppercase tracking-widest text-[#D2C0A7] font-semibold mb-1">
-                  Pengalaman Sensorik Holistik
+                  {language === 'en' ? 'Holistic Sensory Journey' : 'Pengalaman Sensorik Holistik'}
                 </p>
                 <p className="font-serif text-lg italic text-[#F8F5F1]">
-                  "Tubuh yang tenang adalah rumah bagi pikiran yang damai."
+                  {language === 'en'
+                    ? '"A peaceful body is the true sanctuary of a calm mind."'
+                    : '"Tubuh yang tenang adalah rumah bagi pikiran yang damai."'}
                 </p>
               </div>
             </div>
@@ -51,12 +54,18 @@ export const PhilosophySection: React.FC = () => {
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs uppercase font-bold text-[#3C3C32] tracking-wider">Warisan Asli</h4>
-                  <p className="text-[11px] text-[#717163]">100% Bahan Alami</p>
+                  <h4 className="text-xs uppercase font-bold text-[#3C3C32] tracking-wider">
+                    {language === 'en' ? 'Authentic Heritage' : 'Warisan Asli'}
+                  </h4>
+                  <p className="text-[11px] text-[#717163]">
+                    {language === 'en' ? '100% Pure Botanicals' : '100% Bahan Alami'}
+                  </p>
                 </div>
               </div>
               <p className="text-xs text-[#717163] leading-relaxed">
-                Ramuan minyak kelapa murni dipadukan ekstrak bunga kenanga, melati, dan rempah Nusantara.
+                {language === 'en'
+                  ? 'Pure cold-pressed virgin coconut oil blended with authentic floral extracts and botanical roots.'
+                  : 'Ramuan minyak kelapa murni dipadukan ekstrak bunga kenanga, melati, dan rempah Nusantara.'}
               </p>
             </div>
           </div>
@@ -66,14 +75,15 @@ export const PhilosophySection: React.FC = () => {
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-[#889D35]">
                 <Compass className="w-3.5 h-3.5" />
-                <span>Prinsip Perawatan Kami</span>
+                <span>{language === 'en' ? 'Our Treatment Pillars' : 'Prinsip Perawatan Kami'}</span>
               </div>
               <h3 className="font-serif text-2xl sm:text-3xl text-[#3C3C32]">
-                Tiga Pilar Keseimbangan Zen
+                {t.philosophy.title}
               </h3>
               <p className="text-sm text-[#717163] leading-relaxed">
-                Setiap detik kunjungan Anda di Zen dirancang untuk memberikan kenyamanan tanpa kompromi,
-                mulai dari tegukan pertama teh jahe hangat hingga akhir sesi perawatan.
+                {language === 'en'
+                  ? 'Every single moment of your visit is crafted for uncompromised peace, from the first sip of warm herbal ginger tea to the conclusion of your treatment.'
+                  : 'Setiap detik kunjungan Anda di Zen dirancang untuk memberikan kenyamanan tanpa kompromi, mulai dari tegukan pertama teh jahe hangat hingga akhir sesi perawatan.'}
               </p>
             </div>
 
@@ -85,11 +95,10 @@ export const PhilosophySection: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-base font-semibold text-[#3C3C32] mb-1 font-serif">
-                    1. Sentuhan Terapis Berjiwa (Mindful Touch)
+                    1. {t.philosophy.pillar1Title}
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Terapis kami menjalani pelatihan berkala berstandar nasional, menguasai anatomi otot dan
-                    titik akupresur untuk melancarkan sumbatan energi dengan tekanan yang tepat sesuai preferensi Anda.
+                    {t.philosophy.pillar1Desc}
                   </p>
                 </div>
               </div>
@@ -101,11 +110,10 @@ export const PhilosophySection: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-base font-semibold text-[#3C3C32] mb-1 font-serif">
-                    2. Ramuan Herbal Murni Tanpa Kimia Sintetis
+                    2. {t.philosophy.pillar2Title}
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Kami hanya menggunakan minyak pijat berbahan dasar tumbuhan nabati murni dan lulur beras tradisional
-                    yang menutrisi kulit secara mendalam serta aman untuk kulit sensitif.
+                    {t.philosophy.pillar2Desc}
                   </p>
                 </div>
               </div>
@@ -117,16 +125,14 @@ export const PhilosophySection: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-base font-semibold text-[#3C3C32] mb-1 font-serif">
-                    3. Suasana Hening & Standar Higienitas Prima
+                    3. {t.philosophy.pillar3Title}
                   </h4>
                   <p className="text-xs sm:text-sm text-[#717163] leading-relaxed">
-                    Sprei, kain sarung, dan handuk disterilisasi setiap kali selesai digunakan. Ruangan privat dengan
-                    aroma serai yang menenangkan dan alunan musik meditatif menciptakan atmosfer ketenangan mutlak.
+                    {t.philosophy.pillar3Desc}
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -134,4 +140,3 @@ export const PhilosophySection: React.FC = () => {
     </section>
   );
 };
-

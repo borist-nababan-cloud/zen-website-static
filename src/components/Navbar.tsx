@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Outlet, WebMember } from '../types';
 import type { User } from '@supabase/supabase-js';
+import { useLanguage } from '../lib/i18n';
 import {
   Menu,
   X,
@@ -34,6 +35,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfile,
   onOpenTestimonial
 }) => {
+  const { language, setLanguage, t } = useLanguage();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -64,11 +67,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navLinks = [
-    { label: 'Filosofi', href: '#filosofi' },
-    { label: 'Menu Layanan', href: '#layanan' },
-    { label: 'Lokasi Cabang', href: '#outlet' },
-    { label: 'Galeri', href: '#galeri' },
-    { label: 'Ulasan Tamu', href: '#ulasan' },
+    { label: t.nav.philosophy, href: '#filosofi' },
+    { label: t.nav.services, href: '#layanan' },
+    { label: t.nav.outlets, href: '#outlet' },
+    { label: t.nav.gallery, href: '#galeri' },
+    { label: t.nav.testimonials, href: '#ulasan' },
   ];
 
   const displayName =
@@ -87,11 +90,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-[#889D35]" /> Buka Setiap Hari: 10:00 - 22:00 WIB / WITA
+              <Clock className="w-3.5 h-3.5 text-[#889D35]" /> {t.nav.openHours}
             </span>
             <span className="hidden md:inline text-[#606050]">•</span>
             <span className="hidden md:flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-[#889D35]" /> 10+ Cabang Resmi di Seluruh Indonesia
+              <MapPin className="w-3.5 h-3.5 text-[#889D35]" /> {t.nav.nationwide}
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs font-medium">
@@ -101,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               rel="noopener noreferrer"
               className="hover:text-white transition flex items-center gap-1 text-[#889D35]"
             >
-              <Phone className="w-3.5 h-3.5" /> Hotline WhatsApp: {displayWa}
+              <Phone className="w-3.5 h-3.5" /> {t.nav.contactUs}: {displayWa}
             </a>
           </div>
         </div>
@@ -149,14 +152,42 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </nav>
 
-          {/* Action CTAs & Auth Section */}
+          {/* Action CTAs, Language Switcher & Auth Section */}
           <div className="hidden sm:flex items-center gap-3">
+            {/* Language Switcher Pill */}
+            <div className="flex items-center bg-[#E5DACB]/50 p-0.5 rounded-full border border-[#D2C0A7]/60 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setLanguage('id')}
+                className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  language === 'id'
+                    ? 'bg-[#889D35] text-white shadow-xs'
+                    : 'text-[#717163] hover:text-[#3C3C32]'
+                }`}
+                title="Bahasa Indonesia"
+              >
+                ID
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-[#889D35] text-white shadow-xs'
+                    : 'text-[#717163] hover:text-[#3C3C32]'
+                }`}
+                title="English"
+              >
+                EN
+              </button>
+            </div>
+
             <a
               href="#outlet"
-              className="bg-[#889D35] hover:bg-[#6E8027] text-white text-xs uppercase tracking-widest font-semibold px-4 py-2.5 rounded-full shadow-xs hover:shadow transition flex items-center gap-1.5 transform active:scale-95"
+              className="bg-[#889D35] hover:bg-[#6E8027] text-white text-xs uppercase tracking-widest font-semibold px-4 py-2.5 rounded-full shadow-xs hover:shadow transition flex items-center gap-1.5 transform active:scale-95 cursor-pointer"
             >
               <MapPin className="w-3.5 h-3.5" />
-              <span>Cari Cabang</span>
+              <span>{language === 'en' ? 'Find Branches' : 'Cari Cabang'}</span>
             </a>
 
             {/* Google Login / Member Accordion Dropdown */}
@@ -228,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-[#3C3C32] hover:bg-[#889D35]/10 hover:text-[#889D35] transition text-left cursor-pointer"
                       >
                         <UserIcon className="w-4 h-4 text-[#889D35]" />
-                        <span>Profil Member & Alamat</span>
+                        <span>{t.nav.myProfile}</span>
                       </button>
 
                       <button
@@ -240,7 +271,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-[#3C3C32] hover:bg-[#889D35]/10 hover:text-[#889D35] transition text-left cursor-pointer"
                       >
                         <MessageSquareQuote className="w-4 h-4 text-[#889D35]" />
-                        <span>Tulis Testimoni Kunjungan</span>
+                        <span>{t.nav.writeReview}</span>
                       </button>
                     </div>
 
@@ -255,7 +286,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-600 hover:bg-red-50 transition text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>Keluar (Sign Out)</span>
+                        <span>{t.nav.logout}</span>
                       </button>
                     </div>
                   </div>
@@ -265,10 +296,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={onLoginGoogle}
-                className="inline-flex items-center gap-2 bg-white hover:bg-neutral-50 text-[#3C3C32] border border-[#D2C0A7] hover:border-[#889D35] text-xs font-semibold px-4 py-2 rounded-full shadow-2xs hover:shadow transition transform active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 bg-white border border-[#D2C0A7] hover:border-[#889D35] text-[#3C3C32] text-xs font-semibold px-4 py-2 rounded-full shadow-2xs hover:shadow-xs transition transform active:scale-95 cursor-pointer"
               >
-                {/* Google G SVG */}
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
@@ -286,16 +316,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                     d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                   />
                 </svg>
-                <span>Masuk Member</span>
+                <span>{t.nav.memberLogin}</span>
               </button>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center gap-2">
+          {/* Mobile Menu & Language Toggle Button */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <div className="flex items-center bg-[#E5DACB]/50 p-0.5 rounded-full border border-[#D2C0A7]/60 text-[10px] font-bold">
+              <button
+                type="button"
+                onClick={() => setLanguage('id')}
+                className={`px-2 py-0.5 rounded-full transition-all ${
+                  language === 'id' ? 'bg-[#889D35] text-white' : 'text-[#717163]'
+                }`}
+              >
+                ID
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2 py-0.5 rounded-full transition-all ${
+                  language === 'en' ? 'bg-[#889D35] text-white' : 'text-[#717163]'
+                }`}
+              >
+                EN
+              </button>
+            </div>
+
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-[#3C3C32] hover:text-[#889D35] focus:outline-none"
+              className="text-[#3C3C32] hover:text-[#889D35] p-2 focus:outline-none"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -337,7 +389,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="px-3 py-2 bg-white border border-[#D2C0A7] rounded-xl text-xs font-medium text-[#3C3C32] text-center"
                     >
-                      Profil Member
+                      {t.nav.myProfile}
                     </button>
                     <button
                       type="button"
@@ -347,7 +399,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="px-3 py-2 bg-[#889D35]/15 border border-[#889D35]/30 rounded-xl text-xs font-medium text-[#6E8027] text-center"
                     >
-                      Tulis Testimoni
+                      {t.nav.writeReview}
                     </button>
                   </div>
 
@@ -360,7 +412,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="w-full flex items-center justify-center gap-2 py-2 text-xs text-red-600 bg-red-50 rounded-xl"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span>Keluar (Sign Out)</span>
+                    <span>{t.nav.logout}</span>
                   </button>
                 </div>
               ) : (
@@ -390,7 +442,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                     />
                   </svg>
-                  <span>Masuk dengan Google (Member)</span>
+                  <span>{t.nav.memberLogin}</span>
                 </button>
               )}
             </div>
@@ -412,7 +464,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="w-full bg-[#889D35] text-white text-sm font-medium py-3 rounded-full flex items-center justify-center gap-2 shadow"
               >
                 <MapPin className="w-4 h-4" />
-                <span>Cari Lokasi Cabang Terdekat</span>
+                <span>{language === 'en' ? 'Find Nearest Branches' : 'Cari Lokasi Cabang Terdekat'}</span>
               </a>
             </div>
           </div>

@@ -77,3 +77,27 @@ Inspired by top-tier wellness retreats (`gayaspawellness.com` & `ame-spa.com`):
 - **Current Active Mode**: **STAGING** (`https://okchlapizmhoueeeldrh.supabase.co`).
 - Both the Static Website (`frontend\website`) and WHM App (`frontend\warehousemanagement`) are deliberately configured to **Staging Mode** during current testing and quality assurance.
 - Production environment (`https://ihdlwogvjfgawgsalgng.supabase.co`) will be switched to only when the user explicitly instructs deployment readiness.
+
+---
+
+## 8. Bilingual Support (ID/EN) & Interactive Floating CRM Chat Widget (Nov 02, 2026)
+- **Sistem Bilingual Hybrid i18n (`lib/i18n.tsx`)**:
+  - Menyediakan dukungan dua bahasa penuh: **Bahasa Indonesia (`id`, default)** dan **English (`en`)** dengan persistensi `localStorage` (`zen_language`).
+  - Dilengkapi tombol pengalih bahasa minimalis dan elegan `[ ID | EN ]` pada Navbar desktop dan drawer mobile.
+  - Melokalisasi seluruh menu navigasi, hero headline, 3 pilar filosofi, katalog layanan, kontak, dan antarmuka chat widget.
+- **Dual Fields dengan Fallback Otomatis di Database Supabase (`20261102165000_add_english_columns_to_web_tables.sql`)**:
+  - Menambahkan kolom terjemahan bahasa Inggris pada `web_services` (`name_en`, `description_en`, `benefits_en`, `category_en`), `web_facilities` (`name_en`, `description_en`, `category_en`), dan `web_chat_knowledge` (`question_en`, `answer_en`, `keyword_en`).
+  - Diterapkan ke **Staging** dan **Production**.
+  - Mengimplementasikan helper `getLocalizedText()`: jika teks bahasa Inggris belum tersedia, antarmuka otomatis kembali (*fallback*) ke teks default Bahasa Indonesia tanpa error.
+- **Interactive Floating CRM Chat Widget (`FloatingChatWidget.tsx`)**:
+  - Menggantikan tombol WhatsApp statis dengan widget CRM cerdas terpadu di pojok kanan bawah.
+  - **Tamu Belum Login (Guest):** Menampilkan sapaan ramah dan ajakan masuk member Google OAuth ("Masuk dengan Google (Member)") atau opsi darurat WhatsApp hotline holding.
+  - **Tamu Sudah Login (Member):**
+    - Otomatis memuat atau membuat chat room aktif di `web_chat_rooms`.
+    - **Menu Aksi Cepat (Quick Actions):**
+      1. 📅 **Reservasi Jadwal Cabang:** Dropdown memilih cabang dari `master_outlet`, mengarahkan room (`category = 'RESERVASI'`, `kode_outlet = :outlet`, `unread_by_outlet = true`, `status = 'WAITING_STAFF'`). Seketika memicu alarm notifikasi di aplikasi kasir desktop Delphi ZenSystem cabang terkait dan memunculkan tiket di WHM Inbox Outlet!
+      2. 💬 **Tanya Jawab Layanan (FAQ):** Pencarian instan dan tampilan interaktif basis pengetahuan bot dari `web_chat_knowledge` (bilingual ID/EN).
+      3. 👤 **Hubungi CS Pusat (Holding):** Menghubungkan chat ke Holding (`category = 'HOLDING'`, `unread_by_admin = true`, `status = 'WAITING_STAFF'`) untuk dibalas tim holding di WHM Inbox Holding.
+    - **Realtime WebSocket:** Berlangganan Supabase Realtime channel `web_chat_messages` dengan filter `room_id` untuk streaming pesan dua arah instan.
+    - Dilengkapi badge pengirim khusus (Member, Zen Bot, Resepsionis Cabang, Customer Care Holding) dan opsi direct link WhatsApp.
+- **Build Status:** Terverifikasi 100% lulus build produksi `tsc && vite build` (0 error, exit code 0).

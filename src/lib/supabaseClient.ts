@@ -1,5 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Outlet, Service, OutletFacility, ReservationFormData, WebGalleryItem, ServiceOutletAvailability, WebMember, WebTestimonial } from '../types';
+import type { 
+  Outlet, 
+  Service, 
+  OutletFacility, 
+  ReservationFormData, 
+  WebGalleryItem, 
+  ServiceOutletAvailability, 
+  WebMember, 
+  WebTestimonial,
+  ChatRoom,
+  ChatMessage,
+  ChatKnowledge
+} from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ihdlwogvjfgawgsalgng.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_KobV2o95Ymfem77b4zVBJg_E_onldRD';
@@ -251,10 +263,14 @@ export async function fetchPublicServices(): Promise<Service[]> {
         id,
         service_code,
         name,
+        name_en,
         category,
+        category_en,
         duration_minutes,
         description,
+        description_en,
         benefits,
+        benefits_en,
         image_url,
         active,
         sort_order,
@@ -294,10 +310,14 @@ export async function fetchPublicServices(): Promise<Service[]> {
           id: item.id,
           service_code: item.service_code,
           name: item.name,
+          name_en: item.name_en,
           category: item.category,
+          category_en: item.category_en,
           duration_minutes: item.duration_minutes,
           description: item.description,
+          description_en: item.description_en,
           benefits: item.benefits,
+          benefits_en: item.benefits_en,
           image_url: item.image_url,
           sort_order: item.sort_order,
           available_outlets
@@ -329,8 +349,11 @@ export async function fetchOutletFacilities(): Promise<OutletFacility[]> {
           id,
           facility_code,
           name,
+          name_en,
           category,
+          category_en,
           description,
+          description_en,
           icon_name,
           image_url_1,
           image_url_2,
@@ -829,5 +852,208 @@ export async function submitTestimonial(testimonial: {
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err?.message || 'Gagal mengirim testimoni.' };
+  }
+}
+
+/**
+ * ============================================================================
+ * CRM WEB CHAT FUNCTIONS (Supabase Cloud)
+ * ============================================================================
+ */
+
+/**
+ * Fetch the active chat room for a logged-in member.
+ * Supports finding by web_members.id or auth_user_id.
+ */
+export async function fetchMemberActiveChatRoom(params: {
+  memberId?: string | null;
+  authUserId?: string | null;
+}): Promise<ChatRoom | null> {
+  try {
+    const { memberId, authUserId } = params;
+    if (!memberId && !authUserId) return null;
+
+    let query = supabase
+      .from('web_chat_rooms')
+      .select('*')
+      .neq('status', 'RESOLVED');
+
+    if (memberId && authUserId) {
+      query = query.or(`member_id.eq.${memberId},auth_user_id.eq.${authUserId}`);
+    } else if (memberId) {
+      query = query.eq('member_id', memberId);
+    } else if (authUserId) {
+      query = query.eq('auth_user_id', authUserId);
+    }
+
+    const { data, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Error fetching active chat room:', error.message);
+      return null;
+    }
+    return (data as ChatRoom) || null;
+  } catch (err) {
+    console.warn('Network issue fetching active chat room:', err);
+    return null;
+  }
+}
+
+/**
+ * Create a new chat room for a member.
+ */
+export async function createChatRoom(params: {
+  member_id?: string | null;
+  auth_user_id?: string | null;
+  member_name: string;
+  member_phone?: string | null;
+  kode_outlet?: string | null;
+  category?: 'RESERVASI' | 'HOLDING' | 'GENERAL';
+}): Promise<ChatRoom | null> {
+  try {
+    const { data, error } = await supabase
+      .from('web_chat_rooms')
+      .insert([
+        {
+          member_id: params.member_id || null,
+          auth_user_id: params.auth_user_id || null,
+          member_name: params.member_name,
+          member_phone: params.member_phone || null,
+          kode_outlet: params.kode_outlet || null,
+          category: params.category || 'GENERAL',
+          status: 'BOT',
+          unread_by_outlet: false,
+          unread_by_admin: false,
+          unread_by_member: false,
+          last_message: 'Room percakapan dibuka',
+          last_message_at: new Date().toISOString()
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating chat room:', error.message);
+      return null;
+    }
+    return data as ChatRoom;
+  } catch (err) {
+    console.error('Network issue creating chat room:', err);
+    return null;
+  }
+}
+
+/**
+ * Fetch all messages for a specific chat room.
+ */
+export async function fetchChatMessages(roomId: string): Promise<ChatMessage[]> {
+  try {
+    const { data, error } = await supabase
+      .from('web_chat_messages')
+      .select('*')
+      .eq('room_id', roomId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.warn('Error fetching chat messages:', error.message);
+      return [];
+    }
+    return (data as ChatMessage[]) || [];
+  } catch (err) {
+    console.warn('Network issue fetching chat messages:', err);
+    return [];
+  }
+}
+
+/**
+ * Send a message in a chat room.
+ */
+export async function sendChatMessage(params: {
+  room_id: string;
+  sender_type: 'MEMBER' | 'BOT' | 'OUTLET_STAFF' | 'WEB_ADMIN';
+  sender_name: string;
+  message_text: string;
+  sender_id?: string | null;
+  metadata?: any;
+}): Promise<ChatMessage | null> {
+  try {
+    const { data, error } = await supabase
+      .from('web_chat_messages')
+      .insert([
+        {
+          room_id: params.room_id,
+          sender_type: params.sender_type,
+          sender_name: params.sender_name,
+          sender_id: params.sender_id || null,
+          message_text: params.message_text,
+          metadata: params.metadata || {},
+          is_read: false
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error sending chat message:', error.message);
+      return null;
+    }
+    return data as ChatMessage;
+  } catch (err) {
+    console.error('Network issue sending chat message:', err);
+    return null;
+  }
+}
+
+/**
+ * Update chat room status or route to outlet/holding.
+ */
+export async function updateChatRoom(
+  roomId: string,
+  updates: Partial<ChatRoom>
+): Promise<ChatRoom | null> {
+  try {
+    const { data, error } = await supabase
+      .from('web_chat_rooms')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', roomId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating chat room:', error.message);
+      return null;
+    }
+    return data as ChatRoom;
+  } catch (err) {
+    console.error('Network issue updating chat room:', err);
+    return null;
+  }
+}
+
+/**
+ * Fetch active Chat Knowledge Base (FAQ items) with English support.
+ */
+export async function fetchChatKnowledge(): Promise<ChatKnowledge[]> {
+  try {
+    const { data, error } = await supabase
+      .from('web_chat_knowledge')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) {
+      console.warn('Error fetching chat knowledge:', error.message);
+      return [];
+    }
+    return (data as ChatKnowledge[]) || [];
+  } catch (err) {
+    console.warn('Network issue fetching chat knowledge:', err);
+    return [];
   }
 }

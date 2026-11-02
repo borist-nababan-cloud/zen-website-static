@@ -9,18 +9,18 @@ import {
   fetchOutletFacilities,
   fetchMemberProfile
 } from './lib/supabaseClient';
+import { LanguageProvider } from './lib/i18n';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { PhilosophySection } from './components/PhilosophySection';
 import { ServicesSection } from './components/ServicesSection';
 import { OutletsSection } from './components/OutletsSection';
-// import { ReservationSection } from './components/ReservationSection';
 import { GallerySection } from './components/GallerySection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { MemberProfileModal } from './components/MemberProfileModal';
 import { TestimonialModal } from './components/TestimonialModal';
 import { Footer } from './components/Footer';
-import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { FloatingChatWidget } from './components/FloatingChatWidget';
 
 export function App() {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
@@ -80,7 +80,7 @@ export function App() {
 
   useEffect(() => {
     async function loadData() {
-      // 1. Fetch holding contact (kode_outlet = '111') for Header, Footer, and Floating WhatsApp
+      // 1. Fetch holding contact (kode_outlet = '111') for Header, Footer, and Floating Concierge
       fetchHoldingContact().then(setHoldingContact);
 
       // 2. Fetch public outlets strictly querying public columns
@@ -145,89 +145,89 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F5F1] text-[#3C3C32] font-sans flex flex-col selection:bg-[#889D35] selection:text-white">
-      {/* Navigation with dynamic Holding Contact (Kode 111) and Member Auth */}
-      <Navbar
-        onBookClick={scrollToOutlets}
-        holdingContact={holdingContact}
-        currentUser={currentUser}
-        memberProfile={memberProfile}
-        onLoginGoogle={handleGoogleLogin}
-        onLogout={handleLogout}
-        onOpenProfile={() => setIsProfileModalOpen(true)}
-        onOpenTestimonial={handleOpenTestimonial}
-      />
-
-      {/* Main Content Sections */}
-      <main className="flex-1">
-        {/* 1. Hero Section */}
-        <HeroSection onBookClick={scrollToOutlets} />
-
-        {/* 2. Philosophy & Heritage Section */}
-        <PhilosophySection />
-
-        {/* 3. Services & Treatment Menu */}
-        <ServicesSection
-          services={services}
-          isLoading={isLoadingServices}
-        />
-
-        {/* 4. Outlets Directory & Locator with "Lihat Fasilitas" Modal */}
-        <OutletsSection
-          outlets={outlets}
-          outletFacilities={outletFacilities}
-          isLoading={isLoadingOutlets}
-          onSelectOutlet={scrollToOutlets}
-        />
-
-        {/* 5. Online Reservation Form (Temporarily hidden per client request) */}
-        {/* <ReservationSection
-          outlets={outlets}
-          services={services}
-          preselectedOutlet={preselectedOutlet}
-          preselectedService={preselectedService}
-        /> */}
-
-        {/* 6. Gallery Section */}
-        <GallerySection />
-
-        {/* 7. Guest Testimonials with 5 Smile Ratings & Member submission */}
-        <TestimonialsSection
+    <LanguageProvider>
+      <div className="min-h-screen bg-[#F8F5F1] text-[#3C3C32] font-sans flex flex-col selection:bg-[#889D35] selection:text-white">
+        {/* Navigation with dynamic Holding Contact (Kode 111), Member Auth & Language Switcher */}
+        <Navbar
+          onBookClick={scrollToOutlets}
+          holdingContact={holdingContact}
           currentUser={currentUser}
+          memberProfile={memberProfile}
+          onLoginGoogle={handleGoogleLogin}
+          onLogout={handleLogout}
+          onOpenProfile={() => setIsProfileModalOpen(true)}
           onOpenTestimonial={handleOpenTestimonial}
+        />
+
+        {/* Main Content Sections */}
+        <main className="flex-1">
+          {/* 1. Hero Section */}
+          <HeroSection onBookClick={scrollToOutlets} />
+
+          {/* 2. Philosophy & Heritage Section */}
+          <PhilosophySection />
+
+          {/* 3. Services & Treatment Menu with bilingual fallback */}
+          <ServicesSection
+            services={services}
+            isLoading={isLoadingServices}
+          />
+
+          {/* 4. Outlets Directory & Locator with "Lihat Fasilitas" Modal */}
+          <OutletsSection
+            outlets={outlets}
+            outletFacilities={outletFacilities}
+            isLoading={isLoadingOutlets}
+            onSelectOutlet={scrollToOutlets}
+          />
+
+          {/* 5. Gallery Section */}
+          <GallerySection />
+
+          {/* 6. Guest Testimonials with 5 Smile Ratings & Member submission */}
+          <TestimonialsSection
+            currentUser={currentUser}
+            onOpenTestimonial={handleOpenTestimonial}
+            onLoginGoogle={handleGoogleLogin}
+          />
+        </main>
+
+        {/* Footer with dynamic Holding Contact (Kode 111) */}
+        <Footer holdingContact={holdingContact} />
+
+        {/* Interactive Floating CRM Chat Widget (Realtime Chat & WhatsApp Fallback) */}
+        <FloatingChatWidget
+          currentUser={currentUser}
+          memberProfile={memberProfile}
+          outlets={outlets}
+          holdingContact={holdingContact}
           onLoginGoogle={handleGoogleLogin}
         />
-      </main>
 
-      {/* Footer with dynamic Holding Contact (Kode 111) */}
-      <Footer holdingContact={holdingContact} />
+        {/* Member Profile Modal */}
+        {memberProfile && (
+          <MemberProfileModal
+            isOpen={isProfileModalOpen}
+            onClose={() => setIsProfileModalOpen(false)}
+            member={memberProfile}
+            onProfileUpdated={(updated) => setMemberProfile(updated)}
+          />
+        )}
 
-      {/* Sticky Concierge Floating Button with dynamic Holding WhatsApp */}
-      <FloatingWhatsApp holdingContact={holdingContact} />
-
-      {/* Member Profile Modal */}
-      {memberProfile && (
-        <MemberProfileModal
-          isOpen={isProfileModalOpen}
-          onClose={() => setIsProfileModalOpen(false)}
-          member={memberProfile}
-          onProfileUpdated={(updated) => setMemberProfile(updated)}
-        />
-      )}
-
-      {/* Write Testimonial Modal */}
-      {memberProfile && (
-        <TestimonialModal
-          isOpen={isTestimonialModalOpen}
-          onClose={() => setIsTestimonialModalOpen(false)}
-          member={memberProfile}
-          outlets={outlets}
-          onSubmitted={() => {
-            // Testimonial submitted successfully (pending WHM approval)
-          }}
-        />
-      )}
-    </div>
+        {/* Write Testimonial Modal */}
+        {memberProfile && (
+          <TestimonialModal
+            isOpen={isTestimonialModalOpen}
+            onClose={() => setIsTestimonialModalOpen(false)}
+            member={memberProfile}
+            outlets={outlets}
+            onSubmitted={() => {
+              // Testimonial submitted successfully
+            }}
+          />
+        )}
+      </div>
+    </LanguageProvider>
   );
 }
 

@@ -26,11 +26,15 @@ export interface Service {
   id: string;
   service_code: string;
   name: string;
+  name_en?: string | null;
   category: string;
+  category_en?: string | null;
   duration_minutes: number;
   price?: number;
   description?: string | null;
+  description_en?: string | null;
   benefits?: string | null;
+  benefits_en?: string[] | null;
   image_url?: string | null;
   is_featured?: boolean;
   sort_order: number;
@@ -41,8 +45,11 @@ export interface Facility {
   id: string;
   facility_code: string;
   name: string;
+  name_en?: string | null;
   category: string;
+  category_en?: string | null;
   description?: string | null;
+  description_en?: string | null;
   icon_name?: string | null;
   image_url_1?: string | null;
   image_url_2?: string | null;
@@ -75,8 +82,11 @@ export interface ReservationFormData {
 export interface WebGalleryItem {
   id: string;
   title: string;
+  title_en?: string | null;
   description?: string | null;
+  description_en?: string | null;
   category: string;
+  category_en?: string | null;
   image_url: string;
   kode_outlet?: string | null;
   active: boolean;
@@ -122,4 +132,47 @@ export interface WebTestimonial {
     name_outlet: string;
     city: string;
   } | null;
+}
+
+export interface ChatRoom {
+  id: string;
+  member_id: string | null;
+  auth_user_id?: string | null;
+  member_name: string;
+  member_phone: string | null;
+  kode_outlet: string | null;
+  category: 'RESERVASI' | 'HOLDING' | 'GENERAL';
+  status: 'BOT' | 'WAITING_STAFF' | 'ACTIVE' | 'RESOLVED';
+  unread_by_outlet: boolean;
+  unread_by_admin: boolean;
+  unread_by_member: boolean;
+  last_message: string | null;
+  last_message_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  room_id: string;
+  sender_type: 'MEMBER' | 'BOT' | 'OUTLET_STAFF' | 'WEB_ADMIN';
+  sender_name: string;
+  sender_id: string | null;
+  message_text: string;
+  metadata?: any;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface ChatKnowledge {
+  id: string;
+  category: string;
+  keyword: string;
+  keyword_en?: string | null;
+  question: string;
+  question_en?: string | null;
+  answer: string;
+  answer_en?: string | null;
+  is_active: boolean;
+  sort_order: number;
 }
