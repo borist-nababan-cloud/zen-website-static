@@ -104,10 +104,12 @@ export function App() {
 
   const handleGoogleLogin = async () => {
     try {
+      // Dapatkan URL redirect absolut yang presisi untuk Safari/iOS & Chromium
+      const redirectUrl = window.location.origin.replace(/\/$/, '') + (window.location.pathname || '/');
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: redirectUrl
         }
       });
       if (error) {
