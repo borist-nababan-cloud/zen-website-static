@@ -149,3 +149,22 @@ Inspired by top-tier wellness retreats (`gayaspawellness.com` & `ame-spa.com`):
 - **Verifikasi:**
   - Lulus uji kompilasi `tsc && vite build` (15.55s, 0 error).
   - Siap di-commit dan di-push ke branch `main` agar Coolify dapat melakukan auto-deployment secara mulus.
+
+---
+
+## 11. News & Promo Carousel Section & Multi-Environment Rules (Nov 04, 2026)
+- **Aturan Hosting & Database Ekosistem Web:**
+  - **Staging / QA:** `https://home.zenfamilyspa.id/` menggunakan Supabase Staging (`okchlapizmhoueeeldrh`) dan di-deploy via Coolify.
+  - **Production:** `https://zenfamilyspa.com/` menggunakan Supabase Production (`ihdlwogvjfgawgsalgng`) dan di-deploy via standar web hosting (Niagahoster / Hostinger).
+- **Bagian Baru: Carousel Berita & Promo (`NewsPromoSection.tsx`):**
+  - Ditempatkan tepat di bawah `HeroSection` dan di atas `PhilosophySection`.
+  - Mengambil data promosi aktif dari tabel `web_news_promo` di Supabase (`fetchActiveNewsPromos(5)`) dengan limit 5 entitas terbaru.
+  - Fitur interaktif:
+    - Autoplay otomatis setiap 6 detik dengan jeda (*pause*) saat kursor berada di atas slide (*hover*) atau saat layar disentuh (*touch*).
+    - Navigasi tombol panah anggun (`ChevronLeft`, `ChevronRight`) dan indikator titik (*pagination dots*).
+    - Dukungan gestur sentuh geser (*touch swipe*) pada perangkat seluler.
+    - Tampilan bilingual otomatis (`useLanguage()`, `getLocalizedText()`) untuk judul, subjudul, dan deskripsi promo.
+    - Menampilkan lencana promosi (`badge_text`), batas waktu berlaku (`end_date`), gambar promosi dari storage bucket `web-news-promo`, dan tombol Call-to-Action langsung.
+    - Mekanisme *self-collapsing*: jika tidak ada promosi yang aktif, komponen tidak memakan ruang kosong.
+- **Verifikasi Build:**
+  - Lulus kompilasi `tsc && vite build` (7.39s, exit code 0, 0 error).

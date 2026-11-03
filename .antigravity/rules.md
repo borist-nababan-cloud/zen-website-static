@@ -24,3 +24,7 @@
 - **Current Mode**: **STAGING** (`https://okchlapizmhoueeeldrh.supabase.co`).
 - Both the Static Website (`frontend/website`) and WHM App (`frontend/warehousemanagement`) MUST remain synchronized on **Staging Mode** during development and feature testing.
 - Switch to **Production Mode** (`https://ihdlwogvjfgawgsalgng.supabase.co`) ONLY when the user explicitly instructs that the website and WHM are ready for final public production deployment.
+
+## 6. Deployment & Host Environments
+- **Staging URL (https://home.zenfamilyspa.id/)**: Uses **Staging Supabase** (okchlapizmhoueeeldrh) and is deployed via **Coolify** using Dockerfile multi-stage containerization.
+- **Production URL (https://zenfamilyspa.com/)**: Uses **Production Supabase** (ihdlwogvjfgawgsalgng) and is deployed to **standard web hosting** (Niagahoster / Hostinger) using pre-built static distribution (dist/).

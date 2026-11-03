@@ -176,3 +176,23 @@ export interface ChatKnowledge {
   is_active: boolean;
   sort_order: number;
 }
+
+export interface WebNewsPromo {
+  id: string;
+  title: string;
+  title_en?: string | null;
+  subtitle?: string | null;
+  subtitle_en?: string | null;
+  description?: string | null;
+  description_en?: string | null;
+  image_url: string;
+  badge_text?: string | null;
+  cta_url?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  sort_order: number;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+

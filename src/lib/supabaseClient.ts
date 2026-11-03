@@ -10,7 +10,8 @@ import type {
   WebTestimonial,
   ChatRoom,
   ChatMessage,
-  ChatKnowledge
+  ChatKnowledge,
+  WebNewsPromo
 } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ihdlwogvjfgawgsalgng.supabase.co';
@@ -1057,3 +1058,72 @@ export async function fetchChatKnowledge(): Promise<ChatKnowledge[]> {
     return [];
   }
 }
+
+/**
+ * Fallback News & Promos for instant preview and offline resilience
+ */
+export const fallbackNewsPromos: WebNewsPromo[] = [
+  {
+    id: 'promo-1',
+    title: 'Serenity Awakening: Ritual Relaksasi Awal Pekan',
+    title_en: 'Serenity Awakening: Early Week Relaxation Ritual',
+    subtitle: 'Nikmati penawaran eksklusif diskon 20% setiap Senin - Rabu',
+    subtitle_en: 'Enjoy exclusive 20% off every Monday to Wednesday',
+    description: 'Kembalikan kesegaran fisik dan kejernihan pikiran Anda dengan rangkaian The Royal Touch di seluruh outlet pilihan Zen Family Spa.',
+    description_en: 'Restore your physical freshness and mental clarity with The Royal Touch sequence across select Zen Family Spa outlets.',
+    image_url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&auto=format&fit=crop&q=80',
+    badge_text: 'Limited Offer',
+    cta_url: '#outlet',
+    sort_order: 1,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'promo-2',
+    title: 'Warm Herbal Compress Therapy Baru Telah Hadir',
+    title_en: 'New Warm Herbal Compress Therapy Is Here',
+    subtitle: 'Kearifan herbal Nusantara dengan sentuhan modern',
+    subtitle_en: 'Archipelago herbal wisdom with a modern touch',
+    description: 'Rasakan kehangatan rempah alami yang meresap ke otot terdalam, melancarkan peredaran darah, dan mengusir kelelahan menumpuk.',
+    description_en: 'Experience the soothing natural herbs penetrating deep muscles, boosting circulation, and relieving persistent fatigue.',
+    image_url: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1200&auto=format&fit=crop&q=80',
+    badge_text: 'New Treatment',
+    cta_url: '#services',
+    sort_order: 2,
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
+/**
+ * Fetch top 5 active news and promotions from `web_news_promo`
+ */
+export async function fetchActiveNewsPromos(limit = 5): Promise<WebNewsPromo[]> {
+  try {
+    const { data, error } = await supabase
+      .from('web_news_promo')
+      .select('*')
+      .eq('active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.warn('Error fetching web_news_promo:', error.message);
+      return fallbackNewsPromos;
+    }
+
+    if (data && data.length > 0) {
+      return data as WebNewsPromo[];
+    }
+    
+    // If no data exists yet, return fallback for elegant presentation
+    return fallbackNewsPromos;
+  } catch (err) {
+    console.warn('Network issue fetching web_news_promo:', err);
+    return fallbackNewsPromos;
+  }
+}
+

@@ -12,6 +12,7 @@ import {
 import { LanguageProvider } from './lib/i18n';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
+import { NewsPromoSection } from './components/NewsPromoSection';
 import { PhilosophySection } from './components/PhilosophySection';
 import { ServicesSection } from './components/ServicesSection';
 import { OutletsSection } from './components/OutletsSection';
@@ -165,6 +166,9 @@ export function App() {
         <main className="flex-1">
           {/* 1. Hero Section */}
           <HeroSection onBookClick={scrollToOutlets} />
+
+          {/* 1.5. News & Promotions Carousel */}
+          <NewsPromoSection />
 
           {/* 2. Philosophy & Heritage Section */}
           <PhilosophySection />
