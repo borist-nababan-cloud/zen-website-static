@@ -1,4 +1,4 @@
-# Zen Family Spa Official Website - Project Summary (Updated Oct 31, 2026)
+# Zen Family Spa Official Website - Project Summary (Updated Nov 3, 2026)
 
 ## 1. Overview & Architecture
 The **Zen Family Spa & Reflexology Official Website** (`frontend\website`) is a luxury, high-performance static web application built to showcase the brand's authentic healing heritage, treatment catalog, and 10+ branch network across Indonesia.
@@ -101,3 +101,51 @@ Inspired by top-tier wellness retreats (`gayaspawellness.com` & `ame-spa.com`):
     - **Realtime WebSocket:** Berlangganan Supabase Realtime channel `web_chat_messages` dengan filter `room_id` untuk streaming pesan dua arah instan.
     - Dilengkapi badge pengirim khusus (Member, Zen Bot, Resepsionis Cabang, Customer Care Holding) dan opsi direct link WhatsApp.
 - **Build Status:** Terverifikasi 100% lulus build produksi `tsc && vite build` (0 error, exit code 0).
+
+---
+
+## 9. Safari iOS OAuth Redirect Sanitization & Git Push (Nov 03, 2026)
+- **Safari iOS Google OAuth Resolution (`App.tsx`):**
+  - **RCA:** Investigasi menemukan bahwa Safari di iPhone melempar pengalihan login ke Internal App akibat ketidakcocokan format URL pengalihan dengan daftar putih di Supabase, yang memicu mekanisme *fallback* ke default `Site URL` proyek.
+  - **Perbaikan Kode:** Memperbarui fungsi `handleGoogleLogin` di `src/App.tsx` dengan sanitasi URL pengalihan absolut:
+    ```tsx
+    const redirectUrl = window.location.origin.replace(/\/$/, '') + (window.location.pathname || '/');
+    ```
+    Mencegah terjadinya inkonsistensi *trailing-slash* saat diakses dari peramban Safari di perangkat iOS.
+- **Standarisasi Supabase Authentication Multi-App:**
+  - `Site URL` proyek Supabase diarahkan ke `https://zenfamilyspa.com`.
+  - Mendaftarkan seluruh domain ekosistem (`https://zenfamilyspa.com/**`, `https://internalapp.zenfamilyspa.id/**`, `https://whmapp.zenfamilyspa.id/**`) ke dalam daftar **Redirect URLs (Allow List)** Supabase Studio.
+- **Verifikasi Build Produksi & Git Push:**
+  - Berhasil di-build ulang (`npm run build` menghasilkan bundle teroptimasi di `dist/`).
+  - Berhasil di-commit dan di-push ke repositori GitHub `zen-website-static` pada branch `main` (Commit `b415913`).
+  - Siap di-deploy ke hosting cPanel / File Manager Niagahoster.
+
+---
+
+## 10. Coolify Healthcheck & Nginx Containerization Resolution (Nov 03, 2026)
+- **RCA Error Deployment Coolify (`wget: can't connect to remote host: Connection refused`):**
+  - Pada `Dockerfile`, healthcheck sebelumnya menggunakan `wget --quiet --tries=1 --spider http://localhost/ || exit 1`.
+  - Pada Alpine Linux (musl libc), nama host `localhost` di-resolve ke alamat IPv6 loopback (`::1`) terlebih dahulu.
+  - Sementara itu, `nginx.conf` hanya mengonfigurasi `listen 80;` (hanya binding ke IPv4 `0.0.0.0:80`) tanpa binding IPv6 (`listen [::]:80;`), dan belum menginstal paket utilitas `curl` & `wget` lengkap di stage runner Nginx Alpine.
+  - Akibatnya, pemanggilan `wget` internal container ke `localhost` langsung ditolak (`Connection refused`), memicu status container *unhealthy* dan menyebabkan Coolify melakukan *rolling back* ke container lama.
+- **Penyelarasan Standar Produksi Coolify:**
+  1. **Dual Stack IPv4 & IPv6 + Endpoint `/healthz` pada `nginx.conf`:**
+     - Menambahkan arahan `listen [::]:80;`.
+     - Menambahkan endpoint ringan khusus healthcheck:
+       ```nginx
+       location = /healthz {
+           access_log off;
+           add_header Content-Type text/plain;
+           return 200 'OK';
+       }
+       ```
+  2. **Instalasi Paket Utilitas & Healthcheck IPv4 Eksplisit pada `Dockerfile`:**
+     - Menambahkan perintah `RUN apk add --no-cache curl wget` pada stage runner `nginx:alpine`.
+     - Menstandarisasi arahan `HEALTHCHECK` menggunakan loopback IPv4 eksplisit `127.0.0.1:80/healthz` yang identik dengan arsitektur `internalapp`, `warehousemanagement`, dan `dashboard`:
+       ```dockerfile
+       HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+         CMD curl -fs http://127.0.0.1:80/healthz || wget -q -O - http://127.0.0.1:80/healthz || exit 1
+       ```
+- **Verifikasi:**
+  - Lulus uji kompilasi `tsc && vite build` (15.55s, 0 error).
+  - Siap di-commit dan di-push ke branch `main` agar Coolify dapat melakukan auto-deployment secara mulus.

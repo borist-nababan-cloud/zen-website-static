@@ -33,6 +33,9 @@ RUN npm run build
 # Stage 2: Production Nginx Server
 FROM nginx:alpine
 
+# Install curl and wget for reliable container health monitoring
+RUN apk add --no-cache curl wget
+
 # Remove default nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
 
@@ -45,9 +48,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose HTTP port
 EXPOSE 80
 
-# Healthcheck to ensure container is responsive
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+# Production Healthcheck using explicit IPv4 loopback (127.0.0.1:80/healthz)
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -fs http://127.0.0.1:80/healthz || wget -q -O - http://127.0.0.1:80/healthz || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
-
