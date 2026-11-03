@@ -7,7 +7,6 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Calendar, 
-  ArrowRight,
   Megaphone
 } from 'lucide-react';
 
@@ -260,22 +259,14 @@ export const NewsPromoSection: React.FC = () => {
                 )}
               </div>
 
-              {/* CTA Action */}
-              <div className="pt-4 border-t border-[#F8F5F1]/10 flex flex-wrap items-center justify-between gap-4">
-                <a
-                  href={activePromo.cta_url || '#outlet'}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#889D35] hover:bg-[#728528] text-white text-xs sm:text-sm font-medium tracking-wider uppercase transition shadow-md hover:shadow-lg"
-                >
-                  <span>{language === 'en' ? 'Claim Promo' : 'Dapatkan Promo'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-
-                {total > 1 && (
-                  <span className="text-xs text-[#E5DACB]/60 font-mono">
+              {/* Slide Counter Footer */}
+              {total > 1 && (
+                <div className="pt-3 border-t border-[#F8F5F1]/10 flex items-center justify-end">
+                  <span className="text-xs text-[#E5DACB]/60 font-mono tracking-wider">
                     0{currentIndex + 1} / 0{total}
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
