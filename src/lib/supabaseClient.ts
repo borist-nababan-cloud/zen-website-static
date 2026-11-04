@@ -26,9 +26,9 @@ export const fallbackHolding: Outlet = {
   alamat: 'Jl. Surya Sumantri No. 182, Sukawarna, Kec. Sukajadi',
   city: 'Bandung',
   province: 'Jawa Barat',
-  no_telp: '022-2003788',
+  no_telp: '(022) 2003 752',
   no_wa: '082367867000',
-  email: 'info@zenfamilyspa.id'
+  email: 'info@zenfamilyspa.com'
 };
 
 // Fallback Outlets for instant offline rendering / network resilience
@@ -48,7 +48,7 @@ export const fallbackOutlets: Outlet[] = [
     alamat: 'Jl. Surya Sumantri No. 18, Sukawarna, Kec. Sukajadi',
     city: 'Bandung',
     province: 'Jawa Barat',
-    no_telp: '022-2003788',
+    no_telp: '(022) 2003 752',
     no_wa: '08122000168'
   },
   {
