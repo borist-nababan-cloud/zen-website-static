@@ -1,27 +1,27 @@
 import React from 'react';
 import type { Outlet } from '../types';
 import { useLanguage } from '../lib/i18n';
-import { Phone, Mail, MapPin, Clock, Heart, Shield, MessageSquare } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Heart, MessageSquare } from 'lucide-react';
 
 interface FooterProps {
   holdingContact?: Outlet | null;
 }
 
 export const Footer: React.FC<FooterProps> = ({ holdingContact }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   const displayWa = holdingContact?.no_wa || '+62 823-6786-7000';
-  const displayPhone = holdingContact?.no_telp || '022-2003788';
+  const displayPhone = holdingContact?.no_telp || ' (022) 2003 752';
   const displayAddress = holdingContact?.alamat || 'Jl. Surya Sumantri No. 182, Bandung, Jawa Barat';
-  const displayEmail = holdingContact?.email || 'info@zenfamilyspa.id';
+  const displayEmail = holdingContact?.email || 'info@zenfamilyspa.com';
 
   return (
     <footer className="bg-[#25251F] text-[#D2C0A7] pt-20 pb-12 border-t border-[#3C3C32] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-16 border-b border-[#3C3C32]">
-          
+
           {/* Brand Info (Span 2 cols) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
@@ -47,14 +47,14 @@ export const Footer: React.FC<FooterProps> = ({ holdingContact }) => {
               {t.footer.aboutText}
             </p>
 
-            <div className="pt-2 flex items-center gap-3 text-xs text-[#889D35]">
+            {/* <div className="pt-2 flex items-center gap-3 text-xs text-[#889D35]">
               <Shield className="w-4 h-4 shrink-0" />
               <span>
                 {language === 'en'
                   ? 'Certified Five-Star Hygiene & Comfort Standards'
-                  : 'Standar Kebersihan & Kenyamanan Bersertifikasi'}
+                  : 'Standar Kebersihan & Kenyamanan'}
               </span>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -89,10 +89,10 @@ export const Footer: React.FC<FooterProps> = ({ holdingContact }) => {
             <ul className="space-y-2 text-xs text-[#A0A090]">
               <li>Bandung (Sukajadi, Surya Sumantri, Mekarwangi, KBP)</li>
               <li>Jakarta Selatan (Gunawarman, Pakubuwono)</li>
-              <li>Bali (Seminyak / Sunset Road)</li>
-              <li>Depok (Margonda Raya)</li>
-              <li>Makassar (Pelita Raya, Panakkukang)</li>
-              <li>Palu (Moh. Hatta, Palu Timur)</li>
+              <li>Bali (Nusa Dua)</li>
+              <li>Depok (Juanda)</li>
+              <li>Makassar (Pengayoman)</li>
+              <li>Palu (Basuki Rahmat)</li>
             </ul>
           </div>
 
