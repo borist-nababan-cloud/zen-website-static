@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../lib/i18n';
-import { Sparkles, ShieldCheck, Heart, Award } from 'lucide-react';
+import { Sparkles, ShieldCheck, Heart } from 'lucide-react';
 
 interface HeroSectionProps {
   onBookClick?: () => void;
@@ -62,7 +62,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
         </div>
 
         {/* Trust Badges Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-white/15 max-w-4xl mx-auto text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-white/15 max-w-3xl mx-auto text-left">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
               <ShieldCheck className="w-5 h-5 text-[#889D35]" />
@@ -70,16 +70,6 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
             <div>
               <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustOutlets}</p>
               <p className="text-[11px] text-[#D2C0A7]/80">Bandung, Jakarta, Bali & Others</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#889D35]/20 flex items-center justify-center shrink-0 border border-[#889D35]/30">
-              <Award className="w-5 h-5 text-[#889D35]" />
-            </div>
-            <div>
-              <p className="text-xs uppercase font-semibold text-[#F8F5F1] tracking-wider">{t.hero.trustTherapists}</p>
-              <p className="text-[11px] text-[#D2C0A7]/80">{language === 'en' ? 'Professional Masters' : 'Terapis Terlatih Profesional'}</p>
             </div>
           </div>
 
